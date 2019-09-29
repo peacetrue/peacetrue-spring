@@ -1,1 +1,11 @@
 = 简介
+
+* 名称：**peacetrue-spring**
+* 用途：提供 spring-framework 扩展支持
+* 地址： https://github.com/peacetrue/peacetrue-spring[github^]
+
+== 具体内容
+=== bean 工具类
+扩展``BeanUtils``提供更多的方法
+
+//TODO 完善文档和测试
