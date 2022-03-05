@@ -1,0 +1,7 @@
+= 版本
+
+:numbered!: ''
+
+== 1.0.0
+
+扩展 Spring `BeanUtils` 类，满足日常 CRUD 过程中转换 Bean 的需求。

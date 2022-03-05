@@ -1,0 +1,5 @@
+description "spring-beans 扩展"
+
+dependencies {
+    implementation "org.springframework:spring-beans"
+}

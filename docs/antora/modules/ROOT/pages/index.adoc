@@ -1,0 +1,6 @@
+= 简介
+
+//@formatter:off
+*peacetrue-spring* 项目用于扩展 Spring 框架，提供更多实用的方法。
+
+目前该项目内，仅包含一个模块 *peacetrue-spring-beans*，后续会不断扩展。

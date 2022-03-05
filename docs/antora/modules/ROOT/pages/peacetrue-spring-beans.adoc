@@ -1,0 +1,57 @@
+= Spring Beans 模块扩展
+
+:maindir: peacetrue-spring-beans/src/main/java/com/github/peacetrue/spring/beans
+:testdir: peacetrue-spring-beans/src/test/java/com/github/peacetrue/spring/beans
+
+//@formatter:off
+*peacetrue-spring-beans* 模块用于扩展 *spring-beans* 模块，提供更多实用方法。
+
+.maven 依赖坐标
+[source{source-options},maven]
+----
+<dependency>
+  <groupId>com.github.peacetrue.spring</groupId>
+  <artifactId>peacetrue-spring-beans</artifactId>
+  <version>1.0.0</version>
+</dependency>
+----
+
+== BeanUtils
+
+扩展 Spring 的 `BeanUtils` 类，该类的方法主要涉及通过反射操作 *Bean*。
+
+以下结合日常 CRUD 操作，讲解如何使用该类。示例代码仅展示主要逻辑，如需了解具体细节，可查阅源码。
+
+=== 查询场景
+
+[source{source-options},java]
+----
+include::example${testdir}/BeanUtilsTest.java[tags=query]
+----
+
+=== 新增场景
+
+[source{source-options},java]
+----
+include::example${testdir}/BeanUtilsTest.java[tags=insert]
+----
+
+=== 全量更新
+
+[source{source-options},java]
+----
+include::example${testdir}/BeanUtilsTest.java[tags=fullUpdate]
+----
+
+=== 局部更新
+
+[source{source-options},java]
+----
+include::example${testdir}/BeanUtilsTest.java[tags=partUpdate]
+----
+
+.非空判断逻辑
+[source{source-options},java]
+----
+include::example${testdir}/BeanUtilsTest.java[tags=isEmpty]
+----

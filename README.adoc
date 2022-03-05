@@ -1,0 +1,6 @@
+= Spring 框架扩展
+peace <xiayouxue@hotmail.com>
+v1.0.0, 2022-03-05: RELEASE
+
+详情参考 https://peacetrue.cn/summarize/peacetrue-spring/index.html[安宁的博客^]。
+
