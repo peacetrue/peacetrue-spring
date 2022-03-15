@@ -322,6 +322,22 @@ public abstract class BeanUtils extends org.springframework.beans.BeanUtils {
     }
 
     /**
+     * 将默认对象中非空属性值设置到原始对象的空属性上。
+     *
+     * @param source   原始对象
+     * @param defaults 默认对象
+     */
+    public static void setDefaults(Object source, Object defaults) {
+        foreachProperties(source, defaults, (sourceProperty, defaultsProperty) -> {
+            Object sourceValue = getPropertyValue(source, sourceProperty);
+            if (!ObjectUtils.isEmpty(sourceValue)) return;
+            Object defaultsValue = getPropertyValue(defaults, defaultsProperty);
+            if (ObjectUtils.isEmpty(defaultsValue)) return;
+            ReflectionUtils.invokeMethod(sourceProperty.getWriteMethod(), source, defaultsValue);
+        });
+    }
+
+    /**
      * 转换原始对象到目标类型的对象
      * <p>
      * 使用场景：DTO 转实体类、实体类转 VO

@@ -3,8 +3,8 @@ package com.github.peacetrue.spring.beans;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
 import org.junit.jupiter.api.*;
-import org.springframework.lang.Nullable;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -104,6 +104,13 @@ class BeanUtilsTest {
         Assertions.assertEquals(dto.getId(), entity.getId());
         Assertions.assertEquals(dto.getName(), entity.getName());
         Assertions.assertEquals(dto.getPassword(), entity.getPassword());
+        //设置默认值，如果 entity 中某些属性可以为空，这里为其设置默认值
+        entity.setPassword(null);
+        User defaults = EASY_RANDOM.nextObject(User.class);
+        BeanUtils.setDefaults(entity, defaults);
+        Assertions.assertEquals(defaults.getPassword(), entity.getPassword());
+        Assertions.assertNotEquals(defaults.getId(), entity.getId());
+        Assertions.assertNotEquals(defaults.getName(), entity.getName());
     }
     //end::insert[]
 

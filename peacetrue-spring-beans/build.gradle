@@ -1,5 +1,8 @@
 description "spring-beans 扩展"
 
 dependencies {
-    implementation "org.springframework:spring-beans"
+    //仅编译时使用，具体版本由依赖方提供，我方不限制依赖方使用的具体版本，避免版本冲突
+    compileOnly "org.springframework:spring-beans"
+
+    testImplementation "org.springframework:spring-beans"
 }

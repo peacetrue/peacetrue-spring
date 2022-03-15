@@ -9,3 +9,7 @@
 == 1.0.1
 
 依赖的 `peacetrue-dependencies` 使用了快照版本，改为依赖发布版本。
+
+== 1.0.2
+
+添加 `BeanUtils.setDefaults` 方法，用于设置默认值。

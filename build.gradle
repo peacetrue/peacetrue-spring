@@ -1,5 +1,5 @@
-allprojects { project ->
+subprojects { project ->
     group "com.github.peacetrue.spring"
-    version "1.0.1"
+    version "${peaceSpringVersion}${tailSnapshot}"
     description "Spring 框架扩展"
 }
