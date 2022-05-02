@@ -13,3 +13,7 @@
 == 1.0.2
 
 添加 `BeanUtils.setDefaults` 方法，用于设置默认值。
+
+== 1.0.3
+
+添加 *peacetrue-common* 依赖。

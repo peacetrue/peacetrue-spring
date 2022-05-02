@@ -1,6 +1,6 @@
 package com.github.peacetrue.spring.beans;
 
-import com.github.peacetrue.util.PredicateUtils;
+import com.github.peacetrue.util.function.PredicateUtils;
 import org.springframework.core.annotation.Order;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
@@ -15,8 +15,8 @@ import java.util.function.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.github.peacetrue.util.PredicateUtils.extendWithFirst;
-import static com.github.peacetrue.util.PredicateUtils.negate;
+import static com.github.peacetrue.util.function.PredicateUtils.headConvert;
+import static com.github.peacetrue.util.function.PredicateUtils.negate;
 
 /**
  * 扩展 {@link org.springframework.beans.BeanUtils}
@@ -31,7 +31,7 @@ public abstract class BeanUtils extends org.springframework.beans.BeanUtils {
     }
 
     /**
-     * 排序属性。使用 {@link Order} 标记属性，支持标记在字段和方法上
+     * 排序属性。使用 {@link Order} 标记属性，支持标记在字段和方法上。
      *
      * @param properties 属性集合
      */
@@ -236,7 +236,7 @@ public abstract class BeanUtils extends org.springframework.beans.BeanUtils {
                                       @Nullable Predicate<PropertyDescriptor> sourcePropertyFilter,
                                       @Nullable Predicate<Object> sourcePropertyValueFilter) {
         BiPredicate<PropertyDescriptor, Supplier<Object>> predicate = PredicateUtils::alwaysTrue;
-        if (sourcePropertyFilter != null) predicate = predicate.and(extendWithFirst(sourcePropertyFilter));
+        if (sourcePropertyFilter != null) predicate = predicate.and(headConvert(sourcePropertyFilter));
         if (sourcePropertyValueFilter != null) {
             predicate = predicate.and((pd, vs) -> sourcePropertyValueFilter.test(vs.get()));
         }
