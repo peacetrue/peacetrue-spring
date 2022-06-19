@@ -1,0 +1,11 @@
+description "Spring Web 扩展支持"
+
+dependencies {
+    compileOnly "org.slf4j:slf4j-api"
+    compileOnly "javax.servlet:javax.servlet-api"
+    compileOnly "com.github.peacetrue:peacetrue-servlet"
+    compileOnly "org.springframework.boot:spring-boot-autoconfigure"
+    compileOnly "org.springframework.boot:spring-boot-configuration-processor"
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+}
+
