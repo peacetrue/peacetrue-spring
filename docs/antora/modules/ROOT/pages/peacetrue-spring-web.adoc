@@ -1,0 +1,10 @@
+= Spring Web 扩展支持
+
+== 缓存请求体
+
+参考 https://stackoverflow.com/questions/34804205/how-can-i-read-request-body-multiple-times-in-spring-handlermethodargumentresol[How can I read request body multiple times in Spring 'HandlerMethodArgumentResolver'?^]。
+
+Spring 提供的相关实现 `ContentCachingRequestWrapper`、`CommonsRequestLoggingFilter`。
+`ContentCachingRequestWrapper` 实际上只支持读取一次输入流，后续读取需要通过 `getContentAsByteArray` 方法。
+
+`CachedBodyFilter` 支持 ContentType 不是表单时，多次读取输入流。

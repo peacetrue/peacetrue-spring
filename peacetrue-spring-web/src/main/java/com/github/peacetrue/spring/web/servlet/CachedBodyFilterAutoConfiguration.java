@@ -2,6 +2,7 @@ package com.github.peacetrue.spring.web.servlet;
 
 import com.github.peacetrue.servlet.CachedBodyFilter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -32,6 +33,7 @@ public class CachedBodyFilterAutoConfiguration {
     }
 
     @Bean(name = CACHED_BODY_FILTER_NAME)
+    @ConditionalOnMissingBean(name = CACHED_BODY_FILTER_NAME)
     public FilterRegistrationBean<CachedBodyFilter> cachedBodyFilter() {
         FilterRegistrationBean<CachedBodyFilter> registrationBean = new FilterRegistrationBean<>();
         registrationBean.setFilter(new CachedBodyFilter());
