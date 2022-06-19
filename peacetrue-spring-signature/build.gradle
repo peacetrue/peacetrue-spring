@@ -1,0 +1,24 @@
+description "基于 Spring 的签名实现"
+
+dependencies {
+    implementation "com.github.peacetrue:peacetrue-common"
+    implementation "com.github.peacetrue:peacetrue-cryptography"
+    implementation "com.github.peacetrue:peacetrue-servlet"
+    implementation project(":peacetrue-spring-web")
+
+    compileOnly "org.slf4j:slf4j-api"
+    compileOnly "javax.servlet:javax.servlet-api"
+    compileOnly "org.springframework:spring-webmvc"
+    compileOnly "org.springframework.boot:spring-boot-autoconfigure"
+    compileOnly "org.springframework.boot:spring-boot-configuration-processor"
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+    testImplementation "org.jooq:jool-java-8"
+    testImplementation "org.apache.httpcomponents:httpclient"
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    testImplementation "org.springframework.boot:spring-boot-starter-web"
+    testImplementation "com.github.peacetrue.result:peacetrue-result-success"
+    testImplementation "com.github.peacetrue.result:peacetrue-result-exception-support"
+
+}
+

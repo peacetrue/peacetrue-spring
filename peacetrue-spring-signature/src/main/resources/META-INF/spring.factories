@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.github.peacetrue.spring.signature.SignatureAutoConfiguration,\
+  com.github.peacetrue.spring.signature.SignatureClientAutoConfiguration,\
+  com.github.peacetrue.spring.signature.SignatureServerAutoConfiguration
