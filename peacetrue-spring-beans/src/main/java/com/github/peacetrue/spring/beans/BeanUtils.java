@@ -1,6 +1,7 @@
 package com.github.peacetrue.spring.beans;
 
 import com.github.peacetrue.util.function.PredicateUtils;
+import org.springframework.beans.BeansException;
 import org.springframework.core.annotation.Order;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
@@ -10,6 +11,9 @@ import javax.annotation.Nullable;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.Collectors;
@@ -24,10 +28,30 @@ import static com.github.peacetrue.util.function.PredicateUtils.negate;
  * @author peace
  */
 @SuppressWarnings("java:S2176")
-public abstract class BeanUtils extends org.springframework.beans.BeanUtils {
+public class BeanUtils extends org.springframework.beans.BeanUtils {
 
-    /** 抽象工具类，无需实例化 */
-    protected BeanUtils() {
+    private static final Map<Class<?>, Supplier<Object>> DEFAULT_VALUES = new HashMap<>();
+    /** 不同类型的默认值 */
+    private static final BiFunction<String, Class<?>, Object> DEFAULT_VALUE_SUPPLIER =
+            (name, type) -> Optional.ofNullable(DEFAULT_VALUES.get(type)).map(Supplier::get).orElse(null);
+
+    static {
+        DEFAULT_VALUES.put(String.class, () -> "");
+        DEFAULT_VALUES.put(Boolean.class, () -> false);
+        DEFAULT_VALUES.put(Long.class, () -> 0L);
+        DEFAULT_VALUES.put(Integer.class, () -> 0);
+        DEFAULT_VALUES.put(Short.class, () -> (short) 0);
+        DEFAULT_VALUES.put(Byte.class, () -> (byte) 0);
+        DEFAULT_VALUES.put(Float.class, () -> 0f);
+        DEFAULT_VALUES.put(Double.class, () -> 0d);
+        DEFAULT_VALUES.put(Character.class, () -> '0');
+        DEFAULT_VALUES.put(Date.class, () -> new Date(0L));
+        DEFAULT_VALUES.put(LocalDate.class, LocalDate::now);
+        DEFAULT_VALUES.put(LocalDateTime.class, LocalDateTime::now);
+        DEFAULT_VALUES.put(BigDecimal.class, () -> BigDecimal.ZERO);
+    }
+
+    private BeanUtils() {
     }
 
     /**
@@ -112,8 +136,8 @@ public abstract class BeanUtils extends org.springframework.beans.BeanUtils {
      * @return 属性值
      */
     public static Map<String, Object> getPropertyValues(Object bean, boolean sortProperty, boolean ignoreNull) {
-        Map<String, Object> propertyValues = new LinkedHashMap<>();
         PropertyDescriptor[] properties = getPropertyDescriptors(bean.getClass());
+        Map<String, Object> propertyValues = new LinkedHashMap<>(properties.length);
         if (sortProperty) sort(properties);
         foreachProperties(properties, property -> {
             Object propertyValue = getPropertyValue(bean, property);
@@ -167,7 +191,7 @@ public abstract class BeanUtils extends org.springframework.beans.BeanUtils {
     }
 
     /**
-     * 遍历指定对象的所有属性
+     * 遍历指定对象的所有属性。
      *
      * @param bean            指定对象
      * @param propertyHandler 属性处理器
@@ -338,6 +362,36 @@ public abstract class BeanUtils extends org.springframework.beans.BeanUtils {
     }
 
     /**
+     * 设置默认值。
+     *
+     * @param bean 简单 Java 值对象
+     */
+    public static void setDefaults(Object bean) {
+        setDefaults(bean, DEFAULT_VALUE_SUPPLIER);
+    }
+
+    /**
+     * 设置默认值。
+     *
+     * @param bean                 简单 Java 值对象
+     * @param defaultValueSupplier 默认值提供者，根据属性名称和类型获取默认值
+     */
+    public static void setDefaults(Object bean, BiFunction<String, Class<?>, Object> defaultValueSupplier) {
+        PropertyDescriptor[] descriptors = getPropertyDescriptors(bean.getClass());
+        for (PropertyDescriptor descriptor : descriptors) {
+            Method writeMethod = descriptor.getWriteMethod();
+            Method readMethod = descriptor.getReadMethod();
+            if (writeMethod == null || readMethod == null) continue;
+            Object value = ReflectionUtils.invokeMethod(readMethod, bean);
+            if (value != null) continue;
+            Object newValue = defaultValueSupplier.apply(descriptor.getName(), descriptor.getPropertyType());
+            if (newValue == null) continue;
+            ReflectionUtils.invokeMethod(writeMethod, bean, newValue);
+        }
+    }
+
+
+    /**
      * 转换原始对象到目标类型的对象
      * <p>
      * 使用场景：DTO 转实体类、实体类转 VO
@@ -423,7 +477,7 @@ public abstract class BeanUtils extends org.springframework.beans.BeanUtils {
     }
 
     /**
-     * 按指定属性分组对象集合
+     * 按指定属性分组对象集合。
      *
      * @param beans         对象集合
      * @param keyProperty   作为键的属性名

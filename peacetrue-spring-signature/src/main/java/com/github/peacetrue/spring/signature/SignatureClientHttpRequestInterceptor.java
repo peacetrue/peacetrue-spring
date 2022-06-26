@@ -19,15 +19,15 @@ import java.util.Objects;
 @Slf4j
 public class SignatureClientHttpRequestInterceptor implements ClientHttpRequestInterceptor {
 
-    private final SignatureClientService signatureSignService;
+    private final SignatureClientService signatureClientService;
 
-    public SignatureClientHttpRequestInterceptor(SignatureClientService signatureSignService) {
-        this.signatureSignService = Objects.requireNonNull(signatureSignService);
+    public SignatureClientHttpRequestInterceptor(SignatureClientService signatureClientService) {
+        this.signatureClientService = Objects.requireNonNull(signatureClientService);
     }
 
     @Override
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
-        URI uri = signatureSignService.sign(request, body);
+        URI uri = signatureClientService.sign(request, body);
         log.debug("got signed request uri: {}", uri);
         return execution.execute(new HttpRequestWrapper(request) {
             @Override
@@ -35,6 +35,5 @@ public class SignatureClientHttpRequestInterceptor implements ClientHttpRequestI
                 return uri;
             }
         }, body);
-
     }
 }

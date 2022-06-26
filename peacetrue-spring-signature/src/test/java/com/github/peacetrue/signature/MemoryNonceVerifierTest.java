@@ -3,6 +3,7 @@ package com.github.peacetrue.signature;
 import lombok.extern.slf4j.Slf4j;
 import org.jeasy.random.EasyRandom;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -33,7 +34,8 @@ class MemoryNonceVerifierTest {
         Assertions.assertFalse(verifier.exists("test", "test"));
     }
 
-    @Test
+    /** 时间太长，针对性运行测试，总体测试时不启用 */
+//    @Test
     void concurrence() throws InterruptedException {
         MemoryNonceVerifier verifier = new MemoryNonceVerifier(10, 500);
         TimeUnit.MICROSECONDS.sleep(501);

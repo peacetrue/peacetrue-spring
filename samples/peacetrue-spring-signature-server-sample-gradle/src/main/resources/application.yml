@@ -1,0 +1,15 @@
+logging:
+  level:
+    root: info
+    org.springframework: debug
+    com.github.peacetrue: trace
+
+peacetrue:
+  web:
+    cached-body-path-patterns: /*
+  signature:
+    verify-path-patterns: /**
+    client-id: test
+    client-secret: 123456
+    timestamp-offset:
+      lower-bound: 1

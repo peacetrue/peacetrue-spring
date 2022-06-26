@@ -1,0 +1,9 @@
+logging:
+  level:
+    root: warn
+#    org.springframework: debug
+    com.github.peacetrue: trace
+
+peacetrue:
+  signature:
+    sign-path-patterns: /**

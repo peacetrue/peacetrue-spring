@@ -1,13 +1,11 @@
 package com.github.peacetrue.spring.signature;
 
-import com.github.peacetrue.signature.SignaturePropertyValues;
-import com.github.peacetrue.signature.SignaturePropertyValuesGenerator;
-import com.github.peacetrue.signature.Signer;
-import com.github.peacetrue.signature.SignerProvider;
+import com.github.peacetrue.codec.Codec;
+import com.github.peacetrue.signature.*;
+import org.apache.commons.lang.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.http.HttpMessageConvertersAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryAutoConfiguration;
@@ -19,9 +17,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.github.peacetrue.spring.signature.SignatureAutoConfiguration.SIGNATURE_SIGNER;
+import static com.github.peacetrue.spring.signature.SignatureAutoConfiguration.CLIENT_SECRET_CODEC;
 
 /**
  * @author peace
@@ -44,19 +45,28 @@ class SignatureTestConfiguration {
     }
 
     @Bean
-    @Profile("customSignerProvider")
-    @ConditionalOnBean(name = SIGNATURE_SIGNER)
-    public SignerProvider signerProvider(@Qualifier(SIGNATURE_SIGNER) Signer<String, String> signatureSigner) {
-        Map<String, Signer<String, String>> signers = new HashMap<>();
-        return clientId -> signers.computeIfAbsent(clientId, temp -> "errorClientId".equals(temp) ? null : signatureSigner);
+    @Profile("customStringSignerFactory")
+    public StringSignerFactory stringSignerFactory(@Qualifier(CLIENT_SECRET_CODEC) Codec clientSecretCodec) {
+        return new CodecSignerFactory(BytesSignerFactory.HmacSHA256, clientSecretCodec);
+    }
+
+    @Bean
+    @Profile("customClientSecretProvider")
+    public ClientSecretProvider clientSecretProvider() {
+        AtomicInteger serverMissing = new AtomicInteger(0);
+        return clientId -> {
+            if ("random".equals(clientId)) return RandomStringUtils.randomNumeric(10);
+            if ("fix".equals(clientId)) return "11";
+            if ("serverMissing".equals(clientId) && serverMissing.getAndIncrement() % 2 == 0) return "11";
+            return null;
+        };
     }
 
     @Bean
     @Profile("customPropertyValuesGenerator")
-    public SignaturePropertyValuesGenerator propertyValuesGenerator() {
+    public SignatureParameterValuesGenerator propertyValuesGenerator() {
         return clientId -> {
-            SignaturePropertyValues values = new SignaturePropertyValues();
-            values.setClientId(clientId);
+            SignatureParameterValues values = new SignatureParameterValues();
             values.setTimestamp(System.currentTimeMillis());
             values.setNonce(UUID.randomUUID().toString());
             return values;

@@ -16,4 +16,8 @@
 
 == 1.0.3
 
-添加 *peacetrue-common* 依赖。
+* 添加 *peacetrue-common* 依赖
+* 添加 *peacetrue-spring-data* 模块
+* 添加 *peacetrue-spring-operator* 模块
+* 添加 *peacetrue-spring-signature* 模块
+* 添加 *peacetrue-spring-web* 模块

@@ -1,10 +1,10 @@
 package com.github.peacetrue.spring.signature;
 
-import com.github.peacetrue.signature.SignaturePropertyValues;
-import com.github.peacetrue.signature.SignaturePropertyValuesGenerator;
-import com.github.peacetrue.signature.Signer;
+import com.github.peacetrue.signature.ClientSecretProvider;
+import com.github.peacetrue.signature.SignatureParameterValues;
+import com.github.peacetrue.signature.SignatureParameterValuesGenerator;
+import com.github.peacetrue.signature.StringSignerFactory;
 import com.github.peacetrue.spring.http.client.PathMatcherClientHttpRequestInterceptor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -13,7 +13,7 @@ import org.springframework.boot.web.client.RestTemplateCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import static com.github.peacetrue.spring.signature.SignatureAutoConfiguration.SIGNATURE_SIGNER;
+import java.util.Arrays;
 
 /**
  * 签名客户端配置。
@@ -27,21 +27,22 @@ import static com.github.peacetrue.spring.signature.SignatureAutoConfiguration.S
 public class SignatureClientAutoConfiguration {
 
     @Bean
-    @ConditionalOnMissingBean(SignaturePropertyValuesGenerator.class)
-    public SignaturePropertyValuesGenerator signaturePropertyValuesGenerator() {
-        return SignaturePropertyValues::random;
+    @ConditionalOnMissingBean(SignatureParameterValuesGenerator.class)
+    public SignatureParameterValuesGenerator signaturePropertyValuesGenerator() {
+        return SignatureParameterValues::random;
     }
 
     @Bean
     public SignatureClientHttpRequestInterceptor signatureClientHttpRequestInterceptor(
-            @Qualifier(SIGNATURE_SIGNER) Signer<String, String> signatureSigner,
-            SignaturePropertyValuesGenerator propertyValuesGenerator,
-            SignatureProperties properties
+            SignatureProperties properties,
+            SignatureParameterValuesGenerator propertyValuesGenerator,
+            ClientSecretProvider clientSecretProvider,
+            StringSignerFactory stringSignerFactory
     ) {
         return new SignatureClientHttpRequestInterceptor(new SignatureClientService(
-                properties.getPropertyNames(),
-                () -> propertyValuesGenerator.generate(properties.getClientId()),
-                signatureSigner
+                properties.getParameterNames(), properties.getClientId(),
+                propertyValuesGenerator, clientSecretProvider,
+                stringSignerFactory
         ));
     }
 
@@ -50,7 +51,7 @@ public class SignatureClientAutoConfiguration {
             SignatureClientHttpRequestInterceptor interceptor, SignatureProperties properties) {
         return restTemplate -> restTemplate.getInterceptors().add(
                 new PathMatcherClientHttpRequestInterceptor(
-                        interceptor, properties.getSignPathPatterns()
+                        interceptor, Arrays.asList(properties.getSignPathPatterns())
                 )
         );
     }

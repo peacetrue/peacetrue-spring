@@ -8,4 +8,4 @@ asciidoc:
   attributes:
     numbered: '@'
     source-options: '%nowrap@'
-
+    app-name: peacetrue-spring

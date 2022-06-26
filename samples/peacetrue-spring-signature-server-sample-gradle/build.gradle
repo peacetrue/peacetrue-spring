@@ -1,0 +1,19 @@
+plugins {
+    id "org.springframework.boot" version "$springBootVersion"
+    id "com.github.peacetrue.gradle.build-convention" version "${peaceGradleVersion}${tailSnapshot}"
+}
+
+ext {
+    isPublishDisabled = true
+}
+
+apply plugin: "io.spring.dependency-management"
+dependencies {
+    implementation "com.github.peacetrue.spring:peacetrue-spring-signature"
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-logging"
+    implementation "org.yaml:snakeyaml"
+
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+}
+

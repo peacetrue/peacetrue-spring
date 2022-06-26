@@ -5,6 +5,7 @@ import org.jeasy.random.EasyRandomParameters;
 import org.junit.jupiter.api.*;
 
 import javax.annotation.Nullable;
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -214,4 +215,151 @@ class BeanUtilsTest {
     }
     //end::isEmpty[]
 
+
+    @Test
+    void sort() {
+        PropertyDescriptor[] properties = BeanUtils.getPropertyDescriptors(User.class);
+        BeanUtils.sort(properties);
+        Assertions.assertArrayEquals(
+                new String[]{"class", "id", "name", "password", "creatorId", "createdTime"},
+                Arrays.stream(properties).map(PropertyDescriptor::getName).toArray(String[]::new)
+        );
+    }
+
+    @Test
+    void getPropertyValues() {
+        User user = new User();
+        Map<String, Object> propertyValues = BeanUtils.getPropertyValues(user, true, false);
+        Assertions.assertEquals(5, propertyValues.size());
+        propertyValues = BeanUtils.getPropertyValues(user, false, true);
+        Assertions.assertEquals(0, propertyValues.size());
+
+        user.setId(1L);
+        propertyValues = BeanUtils.getPropertyValues(user, true, true);
+        Assertions.assertEquals(1, propertyValues.size());
+    }
+
+    @Test
+    void getPropertyValue() {
+        Assertions.assertNull(BeanUtils.getPropertyValue(new Object(), "notExists"));
+        Assertions.assertNull(BeanUtils.getPropertyValue(new Object() {
+            public void setName(String name) {
+            }
+        }, "name"));
+        Assertions.assertNotNull(BeanUtils.getPropertyValue(new Object(), "class"));
+    }
+
+    @Test
+    void setPropertyValue() {
+        long id = 1L;
+        User user = new User();
+
+        BeanUtils.setPropertyValue(user, "notExists", id);
+        Assertions.assertNull(user.getId());
+
+        BeanUtils.setPropertyValue(user, "class", id);
+        Assertions.assertNull(user.getId());
+
+        BeanUtils.setPropertyValue(user, "id", id);
+        Assertions.assertEquals(id, user.getId());
+    }
+
+    @Test
+    void foreachProperties() {
+        BeanUtils.foreachProperties(new Object() {
+            public void setName(String name) {
+            }
+        }, propertyDescriptor -> Assertions.fail());
+
+        BeanUtils.foreachProperties(new Object() {
+            public void setName(String name) {
+            }
+        }, new Object(), (source, target) -> Assertions.fail());
+
+        BeanUtils.foreachProperties(new Object(), new Object() {
+            public String getName() {
+                return null;
+            }
+        }, (source, target) -> Assertions.fail("writeMethod == null"));
+
+        BeanUtils.foreachProperties(new Object() {
+            public void setName(String name) {
+            }
+        }, new Object() {
+            public void setName(String name) {
+            }
+        }, (source, target) -> Assertions.fail("readMethod == null"));
+
+        BeanUtils.foreachProperties(new Object() {
+            public Integer getName() {
+                return null;
+            }
+        }, new Object() {
+            public void setName(String name) {
+            }
+        }, (source, target) -> Assertions.fail("getParameterTypes != getReturnType"));
+    }
+
+    @Test
+    void copyProperties() {
+        User source = EASY_RANDOM.nextObject(User.class), target = EASY_RANDOM.nextObject(User.class);
+        Assertions.assertNotEquals(source.getId(), target.getId());
+        Assertions.assertNotEquals(source.getName(), target.getName());
+
+        BeanUtils.copyProperties(source, target, property -> property.getName().equals("name"), null);
+        Assertions.assertNotEquals(source.getId(), target.getId());
+        Assertions.assertEquals(source.getName(), target.getName());
+
+        BeanUtils.copyProperties(source, target, null, null);
+        Assertions.assertEquals(source.getId(), target.getId());
+        Assertions.assertEquals(source.getName(), target.getName());
+
+        source.setId(source.getId() + 1);
+        source.setPassword(source.getPassword() + "1");
+        BeanUtils.copyPropertiesNotEmptyExclude(source, target, Arrays.asList("id", "name"));
+        Assertions.assertNotEquals(source.getId(), target.getId());
+        Assertions.assertEquals(source.getPassword(), target.getPassword());
+    }
+
+    @Test
+    void setDefaults() {
+        User source = EASY_RANDOM.nextObject(User.class), target = EASY_RANDOM.nextObject(User.class);
+        Assertions.assertNotEquals(source.getId(), target.getId());
+        Assertions.assertNotEquals(source.getName(), target.getName());
+
+        source.setId(null);
+        source.setName(null);
+        source.setPassword(null);
+        target.setName(null);
+        BeanUtils.setDefaults(source, target);
+        Assertions.assertEquals(source.getId(), target.getId());
+        Assertions.assertEquals(source.getName(), target.getName());
+        Assertions.assertEquals(source.getPassword(), target.getPassword());
+
+        BeanUtils.setDefaults(new Object() {
+            public void setName(String name) {
+            }
+        });
+        source = new User();
+        source.setCreatorId(1L);
+        BeanUtils.setDefaults(source);
+        Assertions.assertEquals(0L, source.getId());
+        Assertions.assertEquals("", source.getName());
+        Assertions.assertEquals(1L, source.getCreatorId());
+
+        source = new User();
+        BeanUtils.setDefaults(source, (name, type) -> String.class == type ? "value" : null);
+        Assertions.assertNull(source.getId());
+        Assertions.assertEquals("value", source.getName());
+
+        BeanUtils.setDefaults(new TestBean());
+    }
+
+    @Test
+    void convert() {
+        List<User> users = EASY_RANDOM.objects(User.class, 10).collect(Collectors.toList());
+        Map<Long, String> names = BeanUtils.convert(users, "id", "name");
+        Assertions.assertEquals(users.size(), names.size());
+        users.forEach(user -> Assertions.assertEquals(user.getName(), names.get(user.getId())));
+    }
 }

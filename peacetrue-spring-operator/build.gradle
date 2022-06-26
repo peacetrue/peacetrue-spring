@@ -1,0 +1,15 @@
+description "操作者组件，自动注入当前操作者"
+
+dependencies {
+    compileOnly "org.slf4j:slf4j-api"
+    implementation "com.github.peacetrue:peacetrue-beans"
+    compileOnly "org.springframework.security:spring-security-core"
+    compileOnly "org.springframework.boot:spring-boot-autoconfigure"
+    compileOnly "org.springframework.boot:spring-boot-configuration-processor"
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    testImplementation "org.springframework.security:spring-security-core"
+    testImplementation project(":peacetrue-spring-beans")
+}
+

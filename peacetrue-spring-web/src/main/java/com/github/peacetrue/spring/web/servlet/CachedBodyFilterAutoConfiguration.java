@@ -19,8 +19,8 @@ import javax.servlet.DispatcherType;
  **/
 @Configuration
 @ConditionalOnClass(CachedBodyFilter.class)
-@EnableConfigurationProperties(CachedBodyFilterProperties.class)
 @ConditionalOnProperty("peacetrue.web.cached-body-path-patterns")
+@EnableConfigurationProperties(CachedBodyFilterProperties.class)
 public class CachedBodyFilterAutoConfiguration {
 
     public static final String CACHED_BODY_FILTER_NAME = "cachedBodyFilter";

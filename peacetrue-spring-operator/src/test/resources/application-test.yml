@@ -1,0 +1,7 @@
+logging:
+  level:
+    jdbc: off
+    jdbc.sqlonly: info
+    com.github.peacetrue: trace
+    org.springframework: info
+    org.flyway: trace

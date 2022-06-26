@@ -8,7 +8,6 @@ import com.github.peacetrue.servlet.ContentTypeUtils;
 import com.github.peacetrue.signature.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.TypeMismatchException;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 
@@ -16,8 +15,6 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -30,18 +27,21 @@ import java.util.Objects;
 @Slf4j
 public class SignatureServerService {
 
-    private final SignerProvider signerProvider;
-    private final SignaturePropertyNames propertyNames;
+    private final SignatureParameterNames propertyNames;
+    private final ClientSecretProvider clientSecretProvider;
+    private final StringSignerFactory stringSignerFactory;
     /** @see SignatureProperties#getTimestampOffset() */
     private final LongRange timestampOffset;
     private final NonceVerifier nonceVerifier;
 
-    public SignatureServerService(SignaturePropertyNames propertyNames,
-                                  SignerProvider signerProvider,
+    public SignatureServerService(SignatureParameterNames propertyNames,
+                                  ClientSecretProvider clientSecretProvider,
+                                  StringSignerFactory stringSignerFactory,
                                   LongRange timestampOffset,
                                   NonceVerifier nonceVerifier) {
         this.propertyNames = Objects.requireNonNull(propertyNames);
-        this.signerProvider = Objects.requireNonNull(signerProvider);
+        this.clientSecretProvider = Objects.requireNonNull(clientSecretProvider);
+        this.stringSignerFactory = Objects.requireNonNull(stringSignerFactory);
         this.timestampOffset = Objects.requireNonNull(timestampOffset);
         this.nonceVerifier = Objects.requireNonNull(nonceVerifier);
     }
@@ -55,8 +55,8 @@ public class SignatureServerService {
         String signature = getParameter(request, propertyNames.getSignature());
         log.debug("got clientId: {}, nonce: {}, timestamp: {}, signature: {}", clientId, nonce, timestamp, signature);
 
-        Signer<String, String> signatureSigner = this.signerProvider.findSigner(clientId);
-        if (signatureSigner == null) throw new ClientInvalidException(clientId);
+        String clientSecret = clientSecretProvider.getClientSecret(clientId);
+        if (clientSecret == null) throw new ClientInvalidException(clientId);
 
         long serverTimestamp = System.currentTimeMillis();
         if (!timestampOffset.increase(serverTimestamp).contains(timestamp)) {
@@ -73,12 +73,13 @@ public class SignatureServerService {
         if (ContentTypeUtils.isRaw(request.getContentType())) {
             byte[] bodyBytes = StreamUtils.copyToByteArray(request.getInputStream());
             String bodyMessage = Codec.BASE64.encode(bodyBytes);
-            log.debug("got body message: {}", bodyMessage);
+            log.debug("got body message(base64): {}", bodyMessage);
             message += bodyMessage;
             request = CachedBodyUtils.wrapper(request, bodyBytes);
         }
         log.debug("build server message: {}", message);
 
+        Signer<String, String> signatureSigner = this.stringSignerFactory.createSigner(clientSecret);
         if (!signatureSigner.verify(message, signature)) throw new SignatureInvalidException(signature, message);
         log.trace("signature verify passed");
         return request;
@@ -90,7 +91,7 @@ public class SignatureServerService {
             return Long.parseLong(timestamp);
         } catch (NumberFormatException e) {
             TypeMismatchException typeMismatchException = new TypeMismatchException(timestamp, Long.class, e);
-            //typeMismatchException.initPropertyName(name);
+            typeMismatchException.initPropertyName(name);
             throw typeMismatchException;
         }
     }

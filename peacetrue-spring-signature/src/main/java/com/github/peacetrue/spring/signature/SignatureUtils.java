@@ -40,7 +40,7 @@ class SignatureUtils {
         String message = joinMessage(params);
         if (!isForm) {
             String bodyMessage = Codec.BASE64.encode(body);
-            log.debug("got body message: {}", bodyMessage);
+            log.debug("got body message(base64): {}", bodyMessage);
             message += bodyMessage;
         }
         return message;

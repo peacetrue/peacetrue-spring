@@ -1,0 +1,5 @@
+peacetrue:
+  operator:
+    pointcut-patterns:
+      enabled: true
+      com.github.peacetrue: add.*, query.*, get.*, modify.*, delete.*

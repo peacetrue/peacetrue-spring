@@ -1,4 +1,4 @@
-= Spring Beans 模块扩展
+= Spring Beans 扩展支持
 
 :maindir: peacetrue-spring-beans/src/main/java/com/github/peacetrue/spring/beans
 :testdir: peacetrue-spring-beans/src/test/java/com/github/peacetrue/spring/beans

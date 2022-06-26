@@ -1,0 +1,51 @@
+package com.github.peacetrue.spring.operator;
+
+import com.github.peacetrue.beans.properties.operator.Operator;
+import com.github.peacetrue.operator.OperatorSupplier;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+/**
+ * @author peace
+ **/
+@ExtendWith(SpringExtension.class)
+@SpringBootTest(
+        classes = {OperatorAutoConfiguration.class, UserServiceImpl.class}
+)
+@ActiveProfiles({"test", "peacetrue-operator"})
+class OperatorAutoConfigurationTest {
+
+    @Autowired
+    private UserServiceImpl userService;
+    @Autowired
+    private OperatorMethodInterceptor operatorMethodInterceptor;
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class OperatorImpl implements Operator {
+        private com.github.peacetrue.beans.operator.Operator<?> operator;
+    }
+
+    @Test
+    void operatorPointcut() {
+        Assertions.assertSame(OperatorSupplier.SYSTEM, OperatorAutoConfiguration.getOperatorSupplier(false));
+
+        operatorMethodInterceptor.setOperatorSupplier(OperatorSupplier.SYSTEM);
+        Operator operator = userService.add(new OperatorImpl(), new Object());
+        Assertions.assertNotNull(operator.getOperator());
+
+        operatorMethodInterceptor.setOperatorSupplier(() -> null);
+        operator = userService.add(new OperatorImpl(new com.github.peacetrue.beans.operator.OperatorImpl<>()), new Object());
+        Assertions.assertNotNull(operator.getOperator());
+    }
+
+}

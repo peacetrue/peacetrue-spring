@@ -1,0 +1,206 @@
+= 请求签名和验证
+
+请求签名的目的不做介绍，主要说明实现逻辑。
+
+== 运行环境
+
+* JDK 8
+* Spring Boot 2.0.0.RELEASE
+
+== 特性支持
+
+* 自动生成签名。客户端发起请求时，自动生成并追加签名相关参数
+* 自动验证签名。服务端接收请求时，自动验证签名
+* 支持标准的签名参数，包括 `clientId`、`nonce`、`timestamp`、`signature`
+
+签名过程中涉及的参数如下：
+
+[%autowidth]
+|===
+|名称 |类型 |描述 |描述
+
+|clientId
+|字符串
+|客户端标志
+|用于验证客户端身份
+
+|nonce
+|字符串
+|随机码
+|唯一值，防止重放攻击，服务端需缓存该值，并校验其唯一性
+
+|timestamp
+|长整形
+|请求时间戳
+|校对时间，防止时间漂移，同时辅助 nonce 参数
+
+|signature
+|字符串
+|签名
+|生成的签名值，防止篡改请求内容
+|===
+
+== 快速开始
+
+引入 maven 依赖：
+
+.pom.xml
+[source%nowrap,maven]
+----
+<dependency>
+    <groupId>com.github.peacetrue.spring</groupId>
+    <artifactId>peacetrue-spring-signature</artifactId>
+    <version>1.0.3</version>
+</dependency>
+----
+
+=== 客户端
+
+配置客户端信息：
+
+.application.yml
+----
+peacetrue.signature.sign-path-patterns: /** //<1>
+peacetrue.signature.client-id: test //<2>
+peacetrue.signature.client-secret: 123456 //<3>
+----
+
+<1> 签名路径规则，Ant path 风格。示例值对所有请求都生成签名参数
+<2> 客户端标志，服务端会检查客户端标志，并获取对应的秘钥验证签名
+<3> 秘钥值，UTF8 字符串，采用 HmacSHA256 算法生成摘要时使用的秘钥
+
+NOTE: 如果秘钥值需要使用 Base64，如何更改？
+
+发送请求示例：
+
+[source%nowrap,java]
+----
+@Test
+void echo() {
+    String input = RandomStringUtils.randomAlphanumeric(10);
+    ResultImpl result = restTemplate.getForObject("/echo?input={0}", ResultImpl.class, input);
+    Assertions.assertNotNull(result);
+}
+----
+
+客户端必须使用 `RestTemplate` 发送请求，否则无法追加相关签名参数。
+
+=== 服务端
+
+配置服务端信息：
+
+.application.yml
+[source%nowrap,yml]
+----
+peacetrue.web.cached-body-path-patterns: /*   //<1>
+peacetrue.signature.verify-path-patterns: /** //<2>
+----
+
+<1> 缓存请求体路径规则，Filter path 风格。示例值对所有请求都缓存请求体
+<2> 验签路径规则，Ant path 风格。示例值对所有请求都生成签名参数
+
+为什么要缓存请求体？验证签名时，可能需要读取请求体内容。一般情况下，请求体内容只能被读取一次，所以需要缓存请求体，后续可以再次读取。
+
+自定义 `ClientSecretProvider`，一个服务端对应多个客户端，每个客户端使用不同的秘钥：
+
+[source%nowrap,java]
+----
+@Bean
+public ClientSecretProvider clientSecretProvider() {
+    //从数据库查询客户端对应的秘钥
+    return clientId -> clientSecret;
+}
+----
+
+== 进阶指南
+
+=== 签名支持的配置项
+
+[%autowidth]
+|===
+| 配置项 | 类型 | 默认值 |说明
+
+| peacetrue.signature | | | 签名使用的配置项前缀
+| peacetrue.signature.client-id | java.lang.String |  | 客户端标志
+| peacetrue.signature.client-secret | java.lang.String |  | 客户端密钥。默认使用 UTF8 字符集解码，可切换为 Base64 或 Hex
+| peacetrue.signature.parameter-names |  | |签名时使用的相关参数名
+| peacetrue.signature.parameter-names.client-id | java.lang.String | clientId | 客户端标志
+| peacetrue.signature.parameter-names.nonce | java.lang.String | nonce | 唯一随机校验码，防止重放攻击
+| peacetrue.signature.parameter-names.signature | java.lang.String | signature | 请求参数的签名
+| peacetrue.signature.parameter-names.timestamp | java.lang.String | timestamp | 时间戳，用于控制客户端和服务端的时间差
+| peacetrue.signature.sign-path-patterns | java.lang.String[] |  | 生成签名路径规则。生成签名时，拦截请求的路径规则，不配置此项不开启签名生成，拦截所有可配置为：/**
+| peacetrue.signature.timestamp-offset |  |  |服务端允许的客户端时间偏移范围，单位毫秒
+| peacetrue.signature.timestamp-offset.lower-bound | java.lang.Long | -10_000 |客户端可比服务端慢多少毫秒
+| peacetrue.signature.timestamp-offset.upper-bound | java.lang.Long |  30_000 |客户端可比服务端快多少毫秒
+| peacetrue.signature.verify-path-patterns | java.lang.String[] |  | 验证签名路径规则。验证签名时，拦截请求的路径规则，不配置此项不开启签名验证，拦截所有可配置为：/**
+|===
+
+=== 自定义 `NonceVerifier`
+
+默认使用 `MemoryNonceVerifier` 验证 `nonce` 是否重复，`MemoryNonceVerifier` 是基于内存的，分布式场景下需要自行实现。
+
+
+== 实现原理
+
+.签名过程时序图
+[plantuml,target=signature-sequence,format=png]
+----
+@startuml
+ClientService -> RestTemplate: 发送请求
+RestTemplate -> SignatureClientHttpRequestInterceptor: 生成并追加签名参数
+SignatureClientHttpRequestInterceptor -> SignatureHandlerInterceptor: 获取并验证签名参数
+SignatureHandlerInterceptor -> ServerController: 调用服务端控制器方法
+@enduml
+----
+
+.签名过程流程图
+[plantuml,target=signature-flow,format=png]
+----
+@startuml
+start
+:获取查询表单参数;
+:查询表单参数追加签名相关参数;
+note right:此处签名相关参数包括 clientId、nonce、timestamp
+switch (ContentType 为？)
+case ( 空 )
+  :<无操作>;
+case ( application/x-www-form-urlencoded )
+  :获取请求体表单参数                          ;
+case ( multipart/form-data )
+  :抛出异常，不支持此内容类型;
+case ( 其他 )
+  :获取请求体内容，Base64 编码;
+endswitch
+:字典序拼接表单参数得到消息;
+note right:表单参数=查询表单参数+请求体表单参数(可能没有)
+:消息末尾追加请求体内容;
+note right:可能没有请求体内容，如没有则无此步骤
+:根据消息生成签名;
+:查询表单参数追加签名参数;
+note right:此时查询表单参数中共多了 4 个签名相关参数
+stop
+@enduml
+----
+
+签名相关参数会追加在查询表单参数中发送请求，不放在请求体中是因为请求体内容类型不确定，不便于放置。
+
+签名过程中涉及的参数类型如下：
+
+|===
+|参数类型 |参数位置 |参数格式 |备注
+
+|查询表单参数
+|URL
+|Form
+|
+
+|请求体表单参数
+|Body
+|Form
+|
+
+|请求体原生参数
+|Body
+|不确定
+|
+|===

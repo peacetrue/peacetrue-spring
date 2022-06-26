@@ -26,7 +26,7 @@ public class SignatureHandlerInterceptor extends HandlerInterceptorAdapter {
         HttpServletRequest wrapper = signatureServerService.verify(request);
         if (wrapper != request) {
             String message = "The request can't be modified, Please enable CachedBodyFilterAutoConfiguration firstly";
-            throw new UnsupportedOperationException(message);
+            throw new IllegalStateException(message);
         }
         return true;
     }
