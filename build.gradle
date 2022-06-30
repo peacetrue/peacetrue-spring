@@ -1,51 +1,9 @@
 plugins {
-    id "com.github.peacetrue.gradle.build-convention" version "${peaceGradleVersion}${tailSnapshot}"
-    id "jacoco-report-aggregation"
-    id "test-report-aggregation"
+    id "com.github.peacetrue.gradle.build-convention" version "${peaceGradleVersion}${tailSnapshot}" apply false
 }
 
-subprojects { project ->
-    group "com.github.peacetrue.spring"
-    version "${peaceSpringVersion}${tailSnapshot}"
-    description "Spring 框架扩展"
-    apply plugin: "com.github.peacetrue.gradle.build-convention"
+group "com.github.peacetrue.spring"
+version "${peaceSpringVersion}${tailSnapshot}"
+description "Spring 框架扩展"
+apply plugin: "com.github.peacetrue.gradle.build-convention"
 
-    dependencies {
-        testImplementation "org.mockito:mockito-core:3.9.0"
-        testImplementation 'org.mockito:mockito-junit-jupiter:3.9.0'
-    }
-}
-
-dependencies {
-    implementation project(":peacetrue-spring-beans")
-    implementation project(":peacetrue-spring-data")
-    implementation project(":peacetrue-spring-operator")
-    implementation project(":peacetrue-spring-signature")
-    implementation project(":peacetrue-spring-web")
-}
-
-test {
-    finalizedBy("testAggregateTestReport", "testCodeCoverageReport")
-}
-
-testAggregateTestReport.finalizedBy("copyTestResults")
-
-task copyTestResults(group: "peacetrue") {
-    doLast {
-        copy {
-            from subprojects*.layout*.buildDirectory*.dir("test-results")
-            include "**/*.xml"
-            into layout.buildDirectory.dir("test-results")
-        }
-    }
-}
-
-//task testReport(type: TestReport) {
-//    destinationDir = file("$buildDir/test-results/test")
-//    // Include the results from the `test` task in all subprojects
-//    reportOn subprojects*.test
-//}
-
-//tasks.named("check") {
-//    dependsOn tasks.named("testCodeCoverageReport", JacocoReport)
-//}
