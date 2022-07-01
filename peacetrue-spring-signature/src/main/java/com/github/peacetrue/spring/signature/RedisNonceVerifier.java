@@ -31,10 +31,7 @@ public class RedisNonceVerifier implements NonceVerifier {
         String key = String.format("NonceVerifier_%s_%s", clientId, nonce);
         byte[] bytes = key.getBytes(StandardCharsets.UTF_8);
         return !Boolean.TRUE.equals(redisTemplate.execute(
-                (RedisCallback<Boolean>) connection -> {
-                    Boolean set = connection.set(bytes, new byte[0], expiration, SET_IF_ABSENT);
-                    return set;
-                }
+                (RedisCallback<Boolean>) connection -> connection.set(bytes, new byte[0], expiration, SET_IF_ABSENT)
         ));
     }
 

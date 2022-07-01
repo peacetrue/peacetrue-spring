@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 
 import javax.annotation.Nullable;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +34,7 @@ class SignatureUtils {
         Map<String, List<String>> params = new HashMap<>(queryParams);
         boolean isForm = ContentTypeUtils.isForm(contentType);
         if (isForm) {
-            Map<String, List<String>> formParams = URLQueryUtils.parseQuery(Codec.CHARSET_UTF8.encode(body));
+            Map<String, List<String>> formParams = URLQueryUtils.parseQuery(new String(body, StandardCharsets.UTF_8));
             log.debug("got body form params: {}", formParams);
             params.putAll(formParams);
         }

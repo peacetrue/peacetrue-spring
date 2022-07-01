@@ -37,7 +37,7 @@ public class PathMatcherClientHttpRequestInterceptor implements ClientHttpReques
     @Override
     public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
         boolean matched = match(request);
-        log.debug("matched request: {}", matched);
+        log.debug("is matched request: {}", matched);
         return matched
                 ? interceptor.intercept(request, body, execution)
                 : execution.execute(request, body);
@@ -49,6 +49,16 @@ public class PathMatcherClientHttpRequestInterceptor implements ClientHttpReques
 
     protected boolean match(String uriPath) {
         log.debug("try to match request uri path: {}", uriPath);
-        return pathPatterns.stream().anyMatch(item -> pathMatcher.match(item, uriPath));
+        return pathPatterns.stream().anyMatch(item -> trace("is matched by {}: {}", item, pathMatcher.match(item, uriPath)));
+    }
+
+    private static <T> T trace(String message, Object... args) {
+        return trace(message, args.length - 1, args);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> T trace(String message, int index, Object... args) {
+        log.trace(message, args);
+        return (T) args[index];
     }
 }

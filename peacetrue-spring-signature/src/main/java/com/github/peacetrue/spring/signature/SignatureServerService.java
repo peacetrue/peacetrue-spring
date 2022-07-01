@@ -53,7 +53,7 @@ public class SignatureServerService {
         String nonce = getParameter(request, propertyNames.getNonce());
         Long timestamp = getLongParameter(request, propertyNames.getTimestamp());
         String signature = getParameter(request, propertyNames.getSignature());
-        log.debug("got clientId: {}, nonce: {}, timestamp: {}, signature: {}", clientId, nonce, timestamp, signature);
+        log.debug("got signature params: clientId={}, nonce={}, timestamp={}, signature={}", clientId, nonce, timestamp, signature);
 
         String clientSecret = clientSecretProvider.getClientSecret(clientId);
         if (clientSecret == null) throw new ClientInvalidException(clientId);

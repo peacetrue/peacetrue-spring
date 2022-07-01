@@ -10,12 +10,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.types.Expiration;
-
-import java.nio.charset.StandardCharsets;
-import java.util.concurrent.TimeUnit;
-
-import static org.springframework.data.redis.connection.RedisStringCommands.SetOption.SET_IF_ABSENT;
 
 /**
  * @author peace

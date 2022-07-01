@@ -3,10 +3,8 @@ plugins {
     id "com.github.peacetrue.gradle.build-convention" version "${peaceGradleVersion}${tailSnapshot}"
 }
 
-ext {
-    isPublishDisabled = true
-}
-
+group "com.github.peacetrue.sample"
+version "${peaceVersion}${tailSnapshot}"
 apply plugin: "io.spring.dependency-management"
 dependencies {
     implementation "com.github.peacetrue.spring:peacetrue-spring-signature"

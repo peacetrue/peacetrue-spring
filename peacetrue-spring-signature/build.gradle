@@ -15,6 +15,7 @@ dependencies {
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
     testImplementation "org.jooq:jool-java-8"
+    testImplementation "javax.xml.bind:jaxb-api"
     testImplementation "org.apache.httpcomponents:httpclient"
     testImplementation "org.springframework.boot:spring-boot-starter-test"
     testImplementation "org.springframework.boot:spring-boot-starter-web"

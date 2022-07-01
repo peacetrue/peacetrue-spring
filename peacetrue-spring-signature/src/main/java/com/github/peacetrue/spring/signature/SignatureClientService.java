@@ -1,5 +1,6 @@
 package com.github.peacetrue.spring.signature;
 
+import com.github.peacetrue.net.URLCodecUtils;
 import com.github.peacetrue.signature.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpRequest;
@@ -14,6 +15,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * 生成签名服务。
@@ -43,11 +45,10 @@ public class SignatureClientService {
     }
 
     public URI sign(HttpRequest request, byte[] body) {
-        log.info("sign request: {}", request.getURI());
+        log.info("sign request: {}", request.getURI()); // uri encoded
 
-        UriComponents uriComponents = UriComponentsBuilder.fromHttpRequest(request).build();
-        MultiValueMap<String, String> queryParams = uriComponents.getQueryParams();//Collections$UnmodifiableMap
-        queryParams = new LinkedMultiValueMap<>(queryParams);
+        UriComponents uriComponents = UriComponentsBuilder.fromHttpRequest(request).build(true);
+        MultiValueMap<String, String> queryParams = decode(uriComponents.getQueryParams());
         log.debug("got query params: {}", queryParams);
 
         String clientIdName = propertyNames.getClientId();
@@ -69,8 +70,21 @@ public class SignatureClientService {
         String signature = signer.sign(message);
         log.debug("generate client signature: {}", signature);
         queryParams.set(propertyNames.getSignature(), signature);
+        return UriComponentsBuilder.newInstance()
+                .scheme(uriComponents.getScheme())
+                .userInfo(uriComponents.getUserInfo())
+                .host(uriComponents.getHost())
+                .port(uriComponents.getPort())
+                .path(uriComponents.getPath())
+                .queryParams(queryParams)
+                .fragment(uriComponents.getFragment())
+                .build().toUri();
+    }
 
-        return UriComponentsBuilder.fromHttpRequest(request).queryParams(queryParams).build().toUri();
+    private MultiValueMap<String, String> decode(MultiValueMap<String, String> queryParams) {
+        LinkedMultiValueMap<String, String> local = new LinkedMultiValueMap<>(queryParams.size());
+        queryParams.forEach((key, values) -> local.put(URLCodecUtils.decode(key), values.stream().map(URLCodecUtils::decode).collect(Collectors.toList())));
+        return local;
     }
 
 }

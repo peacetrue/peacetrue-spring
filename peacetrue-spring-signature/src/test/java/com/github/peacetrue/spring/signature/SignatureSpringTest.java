@@ -45,7 +45,7 @@ class SignatureSpringTest {
     }
 
     private static void echo(TestRestTemplate restTemplate) {
-        String input = RandomStringUtils.randomAlphanumeric(10);
+        String input = "我";
 
         // for URL
         log.debug("------getForObject--------");
@@ -96,7 +96,7 @@ class SignatureSpringTest {
     }
 
     @ExtendWith(SpringExtension.class)
-    @SpringBootTest(classes = {CachedBodyFilterAutoConfiguration.class, SignatureAutoConfiguration.class, SignatureClientAutoConfiguration.class, SignatureServerAutoConfiguration.class, SignatureTestConfiguration.class}, webEnvironment = WebEnvironment.RANDOM_PORT)
+    @SpringBootTest(classes = {SignatureTestConfiguration.class, CachedBodyFilterAutoConfiguration.class, SignatureAutoConfiguration.class, SignatureClientAutoConfiguration.class, SignatureServerAutoConfiguration.class}, webEnvironment = WebEnvironment.RANDOM_PORT)
     @ActiveProfiles("correctClientSecret")
     static class CorrectClientSecret {
 
@@ -114,7 +114,7 @@ class SignatureSpringTest {
     }
 
     @ExtendWith(SpringExtension.class)
-    @SpringBootTest(classes = {CachedBodyFilterAutoConfiguration.class, SignatureAutoConfiguration.class, SignatureClientAutoConfiguration.class, SignatureServerAutoConfiguration.class, SignatureTestConfiguration.class}, webEnvironment = WebEnvironment.RANDOM_PORT)
+    @SpringBootTest(classes = {SignatureTestConfiguration.class, CachedBodyFilterAutoConfiguration.class, SignatureAutoConfiguration.class, SignatureClientAutoConfiguration.class, SignatureServerAutoConfiguration.class}, webEnvironment = WebEnvironment.RANDOM_PORT)
     @ActiveProfiles("customClientSecretProvider")
     static class CustomClientSecretProvider {
 
@@ -129,7 +129,7 @@ class SignatureSpringTest {
 
 
     @ExtendWith(SpringExtension.class)
-    @SpringBootTest(classes = {SignatureAutoConfiguration.class, SignatureClientAutoConfiguration.class, SignatureServerAutoConfiguration.class, SignatureTestConfiguration.class}, webEnvironment = WebEnvironment.RANDOM_PORT)
+    @SpringBootTest(classes = {SignatureTestConfiguration.class, SignatureAutoConfiguration.class, SignatureClientAutoConfiguration.class, SignatureServerAutoConfiguration.class}, webEnvironment = WebEnvironment.RANDOM_PORT)
     @ActiveProfiles("correctClientSecret")
     static class CorrectClientSecretMissingCachedBodyFilter {
 
@@ -143,7 +143,7 @@ class SignatureSpringTest {
     }
 
     @ExtendWith(SpringExtension.class)
-    @SpringBootTest(classes = {SignatureAutoConfiguration.class, CachedBodyFilterAutoConfiguration.class, SignatureClientAutoConfiguration.class, SignatureServerAutoConfiguration.class, SignatureTestConfiguration.class}, webEnvironment = WebEnvironment.RANDOM_PORT)
+    @SpringBootTest(classes = {SignatureTestConfiguration.class, SignatureAutoConfiguration.class, CachedBodyFilterAutoConfiguration.class, SignatureClientAutoConfiguration.class, SignatureServerAutoConfiguration.class}, webEnvironment = WebEnvironment.RANDOM_PORT)
     @ActiveProfiles({"correctClientSecret", "mismatchedSignPath"})
     static class CorrectClientSecretMismatchedSignPath {
 
@@ -158,8 +158,9 @@ class SignatureSpringTest {
 
     @ExtendWith(SpringExtension.class)
     @SpringBootTest(classes = {
+            SignatureTestConfiguration.class,
             ResultMessageSourceAutoConfiguration.class, ResultBuilderAutoConfiguration.class, ResultExceptionAutoConfiguration.class, ResultExceptionSupportAutoConfiguration.class, SignatureResultExceptionAutoConfiguration.class,
-            SignatureAutoConfiguration.class, CachedBodyFilterAutoConfiguration.class, SignatureClientAutoConfiguration.class, SignatureServerAutoConfiguration.class, SignatureTestConfiguration.class
+            SignatureAutoConfiguration.class, CachedBodyFilterAutoConfiguration.class, SignatureClientAutoConfiguration.class, SignatureServerAutoConfiguration.class
     }, webEnvironment = WebEnvironment.RANDOM_PORT)
     @ActiveProfiles({"correctClientSecret", "customClientSecretProvider", "customStringSignerFactory", "customPropertyValuesGenerator"})
     static class CorrectClientSecretResult {
