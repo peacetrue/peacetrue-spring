@@ -2,7 +2,7 @@
 peace <xiayouxue@hotmail.com>
 v1.0.0, 2022-03-05: RELEASE
 :app-name: peacetrue-spring
-:foresight-repoId: 7ea26852-ae34-48b6-99f1-4995704437ab
+:foresight-repoId: 23d08a8b-d58f-49fe-8f52-06665943211b
 
 image:https://img.shields.io/lgtm/grade/java/github/peacetrue/{app-name}["LGTM Grade",link="https://lgtm.com/projects/g/peacetrue/{app-name}"]
 image:https://snyk.io/test/github/peacetrue/{app-name}/badge.svg["Snyk",link="https://app.snyk.io/org/peacetrue"]
