@@ -14,7 +14,7 @@ import java.util.stream.IntStream;
  **/
 class MapTest {
 
-    @Test
+//    @Test
     void concurrenceHashMap() throws InterruptedException {
         Map<Integer, Integer> map = new HashMap<>();
         int threadCount = 100, loopCount = 1000;

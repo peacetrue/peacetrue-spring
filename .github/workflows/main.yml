@@ -38,9 +38,9 @@ jobs:
     - name: Codecov
       uses: codecov/codecov-action@v3.1.0
       if: success()
-      with:
+#      with:
 #        token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
-        files: ./build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml
+#        files: ./build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml
 #        flags: unittests # optional
 #        name: codecov-umbrella # optional
 #        fail_ci_if_error: true # optional (default = false)
