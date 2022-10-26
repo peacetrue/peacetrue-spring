@@ -1,5 +1,6 @@
 package com.github.peacetrue.spring.signature;
 
+import com.github.peacetrue.range.LongRange;
 import com.github.peacetrue.signature.ClientSecretProvider;
 import com.github.peacetrue.signature.MemoryNonceVerifier;
 import com.github.peacetrue.signature.NonceVerifier;
@@ -29,7 +30,7 @@ public class SignatureServerAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(NonceVerifier.class)
     public NonceVerifier nonceVerifier() {
-        return new MemoryNonceVerifier(properties.getTimestampOffset().getOffset());
+        return new MemoryNonceVerifier(LongRange.getOffset(properties.getTimestampOffset()));
     }
 
     @Bean

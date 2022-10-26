@@ -12,6 +12,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static org.springframework.beans.BeanUtils.getPropertyDescriptors;
+
 /**
  * {@link BeanUtils} 测试类
  *
@@ -218,7 +220,7 @@ class BeanUtilsTest {
 
     @Test
     void sort() {
-        PropertyDescriptor[] properties = BeanUtils.getPropertyDescriptors(User.class);
+        PropertyDescriptor[] properties = getPropertyDescriptors(User.class);
         BeanUtils.sort(properties);
         Assertions.assertArrayEquals(
                 new String[]{"class", "id", "name", "password", "creatorId", "createdTime"},

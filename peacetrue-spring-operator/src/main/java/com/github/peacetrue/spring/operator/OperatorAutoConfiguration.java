@@ -21,14 +21,7 @@ import org.springframework.util.ClassUtils;
  * @author peace
  **/
 @Configuration
-@EnableConfigurationProperties(OperatorProperties.class)
 public class OperatorAutoConfiguration {
-
-    private final OperatorProperties properties;
-
-    public OperatorAutoConfiguration(OperatorProperties properties) {
-        this.properties = properties;
-    }
 
     @Bean
     @ConditionalOnMissingBean(OperatorSupplier.class)
@@ -39,29 +32,43 @@ public class OperatorAutoConfiguration {
     }
 
     static OperatorSupplier getOperatorSupplier(boolean securityPresent) {
-        return securityPresent ? new SpringSecurityOperatorSupplier() : OperatorSupplier.SYSTEM;
+        return securityPresent ? new SpringSecurityOperatorSupplier(OperatorSupplier.SYSTEM) : OperatorSupplier.SYSTEM_SUPPLIER;
     }
 
-    @Bean
-    public MethodInterceptor operatorMethodInterceptor() {
-        return new OperatorMethodInterceptor();
-    }
+    /**
+     * 操作者切面配置。
+     */
+    @Configuration
+    @ConditionalOnProperty(name = "peacetrue.operator.pointcut.enabled", havingValue = "true")
+    @EnableConfigurationProperties(OperatorProperties.class)
+    public static class OperatorPointcutConfiguration {
 
-    @Bean
-    @ConditionalOnProperty(name = "peacetrue.operator.pointcut-patterns.enabled")
-    public Pointcut operatorPointcut() {
-        JdkRegexpMethodPointcut methodMatcher = new JdkRegexpMethodPointcut();
-        methodMatcher.setPatterns(properties.resolvePointcutPatterns());
-        return new ComposablePointcut(ClassFilter.TRUE, methodMatcher);
-    }
+        private final OperatorProperties properties;
 
-    @Bean
-    @ConditionalOnBean(name = "operatorPointcut")
-    public OperatorAdvisingPostProcessor operatorPostProcessor(Pointcut operatorPointcut,
-                                                               MethodInterceptor operatorMethodInterceptor) {
-        return new OperatorAdvisingPostProcessor(
-                new DefaultPointcutAdvisor(operatorPointcut, operatorMethodInterceptor)
-        );
+        public OperatorPointcutConfiguration(OperatorProperties properties) {
+            this.properties = properties;
+        }
+
+        @Bean
+        public MethodInterceptor operatorMethodInterceptor() {
+            return new OperatorMethodInterceptor();
+        }
+
+        @Bean
+        public Pointcut operatorPointcut() {
+            JdkRegexpMethodPointcut methodMatcher = new JdkRegexpMethodPointcut();
+            methodMatcher.setPatterns(properties.resolvePointcutPatterns());
+            return new ComposablePointcut(ClassFilter.TRUE, methodMatcher);
+        }
+
+        @Bean
+        @ConditionalOnBean(name = "operatorPointcut")
+        public OperatorAdvisingPostProcessor operatorPostProcessor(Pointcut operatorPointcut,
+                                                                   MethodInterceptor operatorMethodInterceptor) {
+            return new OperatorAdvisingPostProcessor(
+                    new DefaultPointcutAdvisor(operatorPointcut, operatorMethodInterceptor)
+            );
+        }
     }
 
 }

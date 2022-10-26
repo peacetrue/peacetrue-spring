@@ -1,10 +1,9 @@
 package com.github.peacetrue.spring.operator;
 
+import com.github.peacetrue.beans.operator.OperatorCapable;
 import com.github.peacetrue.beans.properties.operator.Operator;
+import com.github.peacetrue.beans.properties.operator.OperatorImpl;
 import com.github.peacetrue.operator.OperatorSupplier;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,23 +27,21 @@ class OperatorAutoConfigurationTest {
     @Autowired
     private OperatorMethodInterceptor operatorMethodInterceptor;
 
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class OperatorImpl implements Operator {
-        private com.github.peacetrue.beans.operator.Operator<?> operator;
-    }
-
     @Test
     void operatorPointcut() {
-        Assertions.assertSame(OperatorSupplier.SYSTEM, OperatorAutoConfiguration.getOperatorSupplier(false));
+        Assertions.assertSame(OperatorSupplier.SYSTEM_SUPPLIER, OperatorAutoConfiguration.getOperatorSupplier(false));
 
-        operatorMethodInterceptor.setOperatorSupplier(OperatorSupplier.SYSTEM);
-        Operator operator = userService.add(new OperatorImpl(), new Object());
+        operatorMethodInterceptor.setOperatorSupplier(OperatorSupplier.SYSTEM_SUPPLIER);
+        Operator<?> operator = userService.add(new OperatorImpl<>(), new Object());
         Assertions.assertNotNull(operator.getOperator());
 
-        operatorMethodInterceptor.setOperatorSupplier(() -> null);
-        operator = userService.add(new OperatorImpl(new com.github.peacetrue.beans.operator.OperatorImpl<>()), new Object());
+        operatorMethodInterceptor.setOperatorSupplier(new OperatorSupplier() {
+            @Override
+            public <T> OperatorCapable<T> getOperator() {
+                return null;
+            }
+        });
+        operator = userService.add(new OperatorImpl<>(new com.github.peacetrue.beans.operator.OperatorImpl<>()), new Object());
         Assertions.assertNotNull(operator.getOperator());
     }
 

@@ -22,14 +22,16 @@ public class OperatorMethodInterceptor implements MethodInterceptor {
     private OperatorSupplier operatorSupplier;
 
     @Override
+
     public Object invoke(MethodInvocation invocation) throws Throwable {
         Object[] arguments = invocation.getArguments();
         for (Object argument : arguments) {
             if (argument instanceof com.github.peacetrue.beans.properties.operator.Operator) {
-                OperatorCapable<?> defaultOperator = operatorSupplier.getOperator();
-                com.github.peacetrue.beans.properties.operator.Operator operatorProperty = (com.github.peacetrue.beans.properties.operator.Operator) argument;
+                @SuppressWarnings("unchecked")
+                com.github.peacetrue.beans.properties.operator.Operator<Object> operatorProperty = (com.github.peacetrue.beans.properties.operator.Operator<Object>) argument;
                 if (operatorProperty.getOperator() == null) {
-                    operatorProperty.setOperator((Operator<?>) defaultOperator);
+                    OperatorCapable<Object> defaultOperator = operatorSupplier.getOperator();
+                    operatorProperty.setOperator(defaultOperator);
                     log.debug("set current Operator: {}", defaultOperator);
                 }
             }

@@ -1,0 +1,30 @@
+logging.level.org.springframework: info
+logging.level.com.github.peacetrue: trace
+
+peacetrue:
+  web:
+    cached-body-path-patterns: /*
+  signature:
+    parameter-names:
+      clientId: _clientId
+      timestamp: _timestamp
+      nonce: _nonce
+      signature: _signature
+    timestamp-offset:
+      lower-bound: -1000
+    sign-path-patterns: /**
+    verify-path-patterns: /**
+---
+spring.profiles: correctClientSecret
+
+peacetrue:
+  signature:
+    client-id: fix
+    client-secret: 1111
+
+---
+spring.profiles: mismatchedSignPath
+
+peacetrue.signature.sign-path-patterns: /test
+
+

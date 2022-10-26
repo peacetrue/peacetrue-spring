@@ -10,6 +10,6 @@ class OperatorSupplierTest {
 
     @Test
     void getOperator() {
-        Assertions.assertNotNull(OperatorSupplier.SYSTEM.getOperator());
+        Assertions.assertNotNull(OperatorSupplier.SYSTEM_SUPPLIER.getOperator());
     }
 }

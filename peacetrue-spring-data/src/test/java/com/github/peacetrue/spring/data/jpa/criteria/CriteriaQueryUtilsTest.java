@@ -38,7 +38,7 @@ import java.util.List;
 @EnableJpaRepositories(basePackageClasses = CriteriaQueryUtilsTest.class)
 @EntityScan(basePackageClasses = CriteriaQueryUtilsTest.class)
 @ActiveProfiles("test")
-public class CriteriaQueryUtilsTest {
+class CriteriaQueryUtilsTest {
 
     private final static EasyRandom EASY_RANDOM = new EasyRandom();
 
@@ -56,7 +56,7 @@ public class CriteriaQueryUtilsTest {
 
     @Test
     @Transactional
-    public void buildCriteriaQuery() {
+    void buildCriteriaQuery() {
         Template template = EASY_RANDOM.nextObject(Template.class);
         entityManager.merge(template);
 

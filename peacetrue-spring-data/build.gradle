@@ -3,16 +3,17 @@ description "spring-data-* 扩展"
 dependencies {
     implementation "com.github.peacetrue:peacetrue-beans"
     implementation project(":peacetrue-spring-beans")
-    //仅编译时使用，具体版本由依赖方提供，我方不限制依赖方使用的具体版本，避免版本冲突
     compileOnly "org.springframework.data:spring-data-commons"
     compileOnly "javax.persistence:javax.persistence-api"
     compileOnly "org.springframework.data:spring-data-jpa"
+    compileOnly "org.springframework.data:spring-data-r2dbc"
 
     testImplementation "org.springframework.data:spring-data-commons"
     testImplementation "javax.persistence:javax.persistence-api"
     testImplementation "org.springframework.data:spring-data-jpa"
     testImplementation "org.springframework.boot:spring-boot-starter-test"
     testImplementation "org.springframework.boot:spring-boot-starter-data-jpa"
+    testImplementation "org.springframework.data:spring-data-r2dbc"
     testImplementation "com.h2database:h2"
-    testImplementation "org.flywaydb:flyway-core:5.0.7"
+    testImplementation "org.flywaydb:flyway-core"
 }

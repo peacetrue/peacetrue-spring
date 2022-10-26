@@ -1,5 +1,6 @@
 peacetrue:
   operator:
-    pointcut-patterns:
+    pointcut:
       enabled: true
-      com.github.peacetrue: add.*, query.*, get.*, modify.*, delete.*
+      patterns:
+        com.github.peacetrue: add.*, query.*, get.*, modify.*, delete.*

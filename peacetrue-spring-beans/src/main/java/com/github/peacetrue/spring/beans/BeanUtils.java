@@ -1,7 +1,6 @@
 package com.github.peacetrue.spring.beans;
 
 import com.github.peacetrue.util.function.PredicateUtils;
-import org.springframework.beans.BeansException;
 import org.springframework.core.annotation.Order;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
@@ -21,14 +20,22 @@ import java.util.stream.Stream;
 
 import static com.github.peacetrue.util.function.PredicateUtils.headConvert;
 import static com.github.peacetrue.util.function.PredicateUtils.negate;
+import static org.springframework.beans.BeanUtils.*;
 
 /**
- * 扩展 {@link org.springframework.beans.BeanUtils}
+ * 扩展 {@link org.springframework.beans.BeanUtils}。
+ * <p>
+ * 工具类不要使用继承，继承会导致需要编译时依赖，
+ * 以下写法导致其他类库引用 peacetrue-spring-beans 后，
+ * 使用 BeanUtils 时，如果不引用 spring-beans 无法通过编译。
+ * <pre>
+ * public class BeanUtils extends org.springframework.beans.BeanUtils{
+ * }
+ * </pre>
  *
  * @author peace
  */
-@SuppressWarnings("java:S2176")
-public class BeanUtils extends org.springframework.beans.BeanUtils {
+public class BeanUtils {
 
     private static final Map<Class<?>, Supplier<Object>> DEFAULT_VALUES = new HashMap<>();
     /** 不同类型的默认值 */
@@ -111,7 +118,7 @@ public class BeanUtils extends org.springframework.beans.BeanUtils {
      * @return 属性值
      */
     @Nullable
-    private static Object getPropertyValue(Object bean, PropertyDescriptor property) {
+    public static Object getPropertyValue(Object bean, PropertyDescriptor property) {
         return Optional.ofNullable(property.getReadMethod())
                 .map(item -> ReflectionUtils.invokeMethod(item, bean))
                 .orElse(null);
