@@ -1,4 +1,5 @@
 * xref:index.adoc[]
-* xref:peacetrue-spring-beans.adoc[]
-* xref:peacetrue-spring-web.adoc[]
+// * xref:start.adoc[]
+// * xref:manual.adoc[]
+// * xref:reference.adoc[]
 * xref:version.adoc[]

@@ -7,7 +7,7 @@
 *peacetrue-spring-beans* 模块用于扩展 *spring-beans* 模块，提供更多实用方法。
 
 .maven 依赖坐标
-[source{source-options},maven]
+[source%nowrap,maven]
 ----
 <dependency>
   <groupId>com.github.peacetrue.spring</groupId>
@@ -24,34 +24,34 @@
 
 === 查询场景
 
-[source{source-options},java]
+[source%nowrap,java]
 ----
 include::example${testdir}/BeanUtilsTest.java[tags=query]
 ----
 
 === 新增场景
 
-[source{source-options},java]
+[source%nowrap,java]
 ----
 include::example${testdir}/BeanUtilsTest.java[tags=insert]
 ----
 
 === 全量更新
 
-[source{source-options},java]
+[source%nowrap,java]
 ----
 include::example${testdir}/BeanUtilsTest.java[tags=fullUpdate]
 ----
 
 === 局部更新
 
-[source{source-options},java]
+[source%nowrap,java]
 ----
 include::example${testdir}/BeanUtilsTest.java[tags=partUpdate]
 ----
 
 .非空判断逻辑
-[source{source-options},java]
+[source%nowrap,java]
 ----
 include::example${testdir}/BeanUtilsTest.java[tags=isEmpty]
 ----

@@ -1,11 +1,12 @@
 name: peacetrue-spring
-title: Spring 框架的扩展
+title: Spring 扩展组件
 version: master
-start_page: ROOT:index.adoc
-nav:
-  - modules/ROOT/nav.adoc
 asciidoc:
   attributes:
     numbered: '@'
-    source-options: '%nowrap@'
+    website: https://peacetrue.github.io
+    app-group: com.github.peacetrue.spring
     app-name: peacetrue-spring
+start_page: ROOT:index.adoc
+nav:
+  - modules/ROOT/nav.adoc
