@@ -1,7 +1,6 @@
 package com.github.peacetrue.spring.beans;
 
 import lombok.Data;
-import lombok.ToString;
 import org.springframework.core.annotation.Order;
 
 import java.time.LocalDateTime;
@@ -13,7 +12,6 @@ import java.util.List;
  * @since 1.0
  **/
 @Data
-@ToString
 public class UserVO {
 
     public static final List<String> PROPERTY_NAMES =

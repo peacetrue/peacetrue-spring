@@ -12,7 +12,6 @@ import java.util.List;
  * @since 1.0
  **/
 @Data
-@ToString()
 public class UserDTO {
 
     public static final List<String> PROPERTY_NAMES = Arrays.asList("id", "name", "password");

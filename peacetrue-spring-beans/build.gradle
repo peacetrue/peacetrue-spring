@@ -5,4 +5,7 @@ dependencies {
     implementation "org.springframework:spring-beans"
 
     testImplementation "org.springframework:spring-beans"
+    testImplementation "com.fasterxml.jackson.core:jackson-databind"
+    testImplementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
+//    testImplementation "cglib:cglib:3.3.0"
 }

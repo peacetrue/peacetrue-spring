@@ -46,14 +46,6 @@ public class BeanUtils_ {
                 .toArray(String[]::new);
     }
 
-    @Test
-    void name() {
-        Assertions.assertNotEquals(
-                getPropertyDescriptor(UserDTO.class, "id"),
-                getPropertyDescriptor(User.class, "id")
-        );
-    }
-
     /**
      * 排除 {@code class} 属性，{@code class} 属性源至 {@link Object#getClass()} 方法
      *

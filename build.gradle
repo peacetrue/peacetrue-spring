@@ -1,5 +1,6 @@
 plugins {
     id "com.github.peacetrue.gradle.build-convention" version "${peaceGradleVersion}${tailSnapshot}" apply false
+    id "me.champeau.jmh" version "0.6.8"
 }
 
 group "com.github.peacetrue.spring"
@@ -7,3 +8,16 @@ version "${peaceSpringVersion}${tailSnapshot}"
 description "Spring 框架扩展"
 apply plugin: "com.github.peacetrue.gradle.build-convention"
 
+subprojects {
+    apply plugin: "me.champeau.jmh"
+    jmh {
+        benchmarkMode = ["avgt"]
+        fork = 1
+        warmupIterations = 2
+        iterations = 5
+        timeOnIteration = '5s'
+        failOnError = true
+        timeUnit = 'ns'
+        profilers = ["stack"]
+    }
+}

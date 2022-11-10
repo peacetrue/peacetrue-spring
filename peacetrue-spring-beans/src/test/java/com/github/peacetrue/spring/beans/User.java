@@ -1,7 +1,6 @@
 package com.github.peacetrue.spring.beans;
 
 import lombok.Data;
-import lombok.ToString;
 import org.springframework.core.annotation.Order;
 
 import java.io.Serializable;
@@ -14,8 +13,7 @@ import java.util.List;
  * @since 1.0
  **/
 @Data
-@ToString
-public class User implements Cloneable, Serializable {
+public class User implements Serializable {
 
     public static final List<String> PROPERTY_NAMES =
             Arrays.asList("id", "name", "password", "creatorId", "createdTime");
