@@ -5,11 +5,11 @@
 :foresight-repo-id: 23d08a8b-d58f-49fe-8f52-06665943211b
 :imagesdir: docs/antora/modules/ROOT/assets/images
 
-image:https://img.shields.io/github/workflow/status/peacetrue/{app-name}/build/master["GitHub Workflow Status",link="https://github.com/peacetrue/{app-name}/actions"]
+image:https://img.shields.io/github/actions/workflow/status/peacetrue/{app-name}/main.yml?branch=master["GitHub Workflow Status",link="https://github.com/peacetrue/{app-name}/actions"]
 image:https://snyk.io/test/github/peacetrue/{app-name}/badge.svg["Snyk",link="https://app.snyk.io/org/peacetrue"]
 image:https://api-public.service.runforesight.com/api/v1/badge/success?repoId={foresight-repo-id}["Foresight",link="https://foresight.thundra.io/repositories/github/peacetrue/{app-name}/test-runs"]
 image:https://img.shields.io/codecov/c/github/peacetrue/{app-name}/master["Codecov",link="https://app.codecov.io/gh/peacetrue/{app-name}"]
-image:https://img.shields.io/nexus/r/{app-group}/{app-name}-beans?label={app-name}&server=https%3A%2F%2Foss.sonatype.org%2F["{app-name}",link="https://search.maven.org/search?q={app-name}"]
+image:https://img.shields.io/nexus/r/{app-group}/{app-name}-beans?label={app-name}&server=https%3A%2F%2Foss.sonatype.org%2F["{app-name}",link="https://central.sonatype.com/search?smo=true&q={app-group}"]
 
 //@formatter:off
 
@@ -19,7 +19,7 @@ image:https://img.shields.io/nexus/r/{app-group}/{app-name}-beans?label={app-nam
 
 == 背景（Why）
 
-基于 Spring 结合本地项目特色实现增强功能。
+基于 Spring 框架结合本地项目特色实现增强功能。
 
 == 用法（How）
 
@@ -33,9 +33,6 @@ implementation "{app-group}:{app-name}-web:\{latest-version}"
 implementation "{app-group}:{app-name}-operator:\{latest-version}"
 implementation "{app-group}:{app-name}-signature:\{latest-version}"
 ----
-
-//TODO 链接坐标转换器
-如需转换为其他格式的 GAV 坐标，可使用 http://bee.peacetrue.cn/function/conversion/gav[坐标转换器^]。
 
 == 参与者（Who）
 

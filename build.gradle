@@ -5,7 +5,7 @@ plugins {
 
 group "com.github.peacetrue.spring"
 version "${peaceSpringVersion}${tailSnapshot}"
-description "Spring 框架扩展"
+description "Spring 扩展组件"
 apply plugin: "com.github.peacetrue.gradle.build-convention"
 
 subprojects {
