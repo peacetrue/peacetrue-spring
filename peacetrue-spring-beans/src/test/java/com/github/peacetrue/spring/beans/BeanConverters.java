@@ -80,7 +80,7 @@ public class BeanConverters {
         public <S, T> T convert(S source, Class<T> targetType) {
 //            T target = BeanUtils.instantiateClass(targetType);
             T target = (T) new UserVO();
-            BEAN_COPIER.copy(source, new UserVO(), null);
+            BEAN_COPIER.copy(source, target, null);
             return target;
         }
     }
