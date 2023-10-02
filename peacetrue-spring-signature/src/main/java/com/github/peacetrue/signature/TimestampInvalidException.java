@@ -20,6 +20,13 @@ public class TimestampInvalidException extends RuntimeException {
     /** 服务端允许的时间戳偏移 */
     private final LongRange timestampOffset;
 
+    /**
+     * 属性设置实例化。
+     *
+     * @param clientTimestamp 客户端时间戳
+     * @param serverTimestamp 服务端时间戳
+     * @param timestampOffset 时间戳偏移范围
+     */
     public TimestampInvalidException(long clientTimestamp, long serverTimestamp, LongRange timestampOffset) {
         super(message(clientTimestamp, serverTimestamp, timestampOffset));
         this.clientTimestamp = clientTimestamp;

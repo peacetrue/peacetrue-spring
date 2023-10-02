@@ -24,10 +24,23 @@ public class PathMatcherClientHttpRequestInterceptor implements ClientHttpReques
     private final PathMatcher pathMatcher;
     private final List<String> pathPatterns;
 
+    /**
+     * 实例化。
+     *
+     * @param interceptor  拦截器
+     * @param pathPatterns 路径规则集合
+     */
     public PathMatcherClientHttpRequestInterceptor(ClientHttpRequestInterceptor interceptor, List<String> pathPatterns) {
         this(new AntPathMatcher(), interceptor, pathPatterns);
     }
 
+    /**
+     * 实例化。
+     *
+     * @param pathMatcher  路径匹配器
+     * @param interceptor  拦截器
+     * @param pathPatterns 路径规则集合
+     */
     public PathMatcherClientHttpRequestInterceptor(PathMatcher pathMatcher, ClientHttpRequestInterceptor interceptor, List<String> pathPatterns) {
         this.pathMatcher = Objects.requireNonNull(pathMatcher);
         this.interceptor = Objects.requireNonNull(interceptor);
@@ -43,10 +56,22 @@ public class PathMatcherClientHttpRequestInterceptor implements ClientHttpReques
                 : execution.execute(request, body);
     }
 
+    /**
+     * 是否匹配该请求。
+     *
+     * @param request 请求
+     * @return true 如果匹配，否则 false
+     */
     protected boolean match(HttpRequest request) {
         return match(request.getURI().getPath());
     }
 
+    /**
+     * 是否匹配该请求 uri。
+     *
+     * @param uriPath 请求 uri
+     * @return true 如果匹配，否则 false
+     */
     protected boolean match(String uriPath) {
         log.debug("try to match request uri path: {}", uriPath);
         return pathPatterns.stream().anyMatch(item -> trace("is matched by {}: {}", item, pathMatcher.match(item, uriPath)));

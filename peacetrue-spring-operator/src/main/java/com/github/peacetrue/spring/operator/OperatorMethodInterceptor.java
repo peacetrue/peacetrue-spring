@@ -1,8 +1,8 @@
 package com.github.peacetrue.spring.operator;
 
-import com.github.peacetrue.beans.operator.Operator;
 import com.github.peacetrue.beans.operator.OperatorCapable;
 import com.github.peacetrue.operator.OperatorSupplier;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
@@ -22,7 +22,6 @@ public class OperatorMethodInterceptor implements MethodInterceptor {
     private OperatorSupplier operatorSupplier;
 
     @Override
-
     public Object invoke(MethodInvocation invocation) throws Throwable {
         Object[] arguments = invocation.getArguments();
         for (Object argument : arguments) {
@@ -39,8 +38,12 @@ public class OperatorMethodInterceptor implements MethodInterceptor {
         return invocation.proceed();
     }
 
-    @Autowired
-    public void setOperatorSupplier(OperatorSupplier operatorSupplier) {
+    /**
+     * 设置操作者提供者。
+     *
+     * @param operatorSupplier 操作者提供者
+     */
+    public void setOperatorSupplier(@Autowired OperatorSupplier operatorSupplier) {
         this.operatorSupplier = operatorSupplier;
     }
 }

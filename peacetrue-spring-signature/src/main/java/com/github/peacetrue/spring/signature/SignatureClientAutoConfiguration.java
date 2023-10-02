@@ -26,12 +26,26 @@ import java.util.Arrays;
 @ConditionalOnClass(name = "org.springframework.boot.web.client.RestTemplateCustomizer")
 public class SignatureClientAutoConfiguration {
 
+    /**
+     * 构造随机签名参数值生成器。
+     *
+     * @return 随机签名参数值生成器
+     */
     @Bean
     @ConditionalOnMissingBean(SignatureParameterValuesGenerator.class)
     public SignatureParameterValuesGenerator signaturePropertyValuesGenerator() {
         return SignatureParameterValues::random;
     }
 
+    /**
+     * 构造签名客户端请求拦截器。
+     *
+     * @param properties              签名属性
+     * @param propertyValuesGenerator 签名参数值生成器
+     * @param clientSecretProvider    客户端秘钥提供者
+     * @param stringSignerFactory     字符串签名者工厂
+     * @return 随机签名参数值生成器
+     */
     @Bean
     public SignatureClientHttpRequestInterceptor signatureClientHttpRequestInterceptor(
             SignatureProperties properties,
@@ -46,6 +60,13 @@ public class SignatureClientAutoConfiguration {
         ));
     }
 
+    /**
+     * 构造签名 Rest 客户端请求自定义器。
+     *
+     * @param interceptor 签名客户端请求拦截器
+     * @param properties  签名属性
+     * @return 签名 Rest 客户端请求自定义器
+     */
     @Bean
     public RestTemplateCustomizer signatureRestTemplateCustomizer(
             SignatureClientHttpRequestInterceptor interceptor, SignatureProperties properties) {

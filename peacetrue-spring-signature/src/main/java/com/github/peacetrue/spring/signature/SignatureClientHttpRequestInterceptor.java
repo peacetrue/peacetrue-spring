@@ -21,6 +21,11 @@ public class SignatureClientHttpRequestInterceptor implements ClientHttpRequestI
 
     private final SignatureClientService signatureClientService;
 
+    /**
+     * 属性设置实例化。
+     *
+     * @param signatureClientService 签名客户端服务
+     */
     public SignatureClientHttpRequestInterceptor(SignatureClientService signatureClientService) {
         this.signatureClientService = Objects.requireNonNull(signatureClientService);
     }

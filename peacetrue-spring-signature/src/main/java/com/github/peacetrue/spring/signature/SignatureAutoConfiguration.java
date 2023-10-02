@@ -21,20 +21,38 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(SignatureProperties.class)
 public class SignatureAutoConfiguration {
 
+    /** 客户端秘钥编解码器名称 */
     public static final String CLIENT_SECRET_CODEC = "clientSecretCodec";
 
+    /**
+     * 构造默认的客户端秘钥编解码器。
+     *
+     * @return 字符集编解码器
+     */
     @Bean
     @ConditionalOnMissingBean(name = CLIENT_SECRET_CODEC)
     public Codec clientSecretCodec() {
         return Codec.CHARSET_UTF8;
     }
 
+    /**
+     * 构造默认的字符串签名者工厂。
+     *
+     * @param clientSecretCodec 客户端秘钥编解码器
+     * @return HmacSHA256 字符串签名者工厂
+     */
     @Bean
     @ConditionalOnMissingBean(StringSignerFactory.class)
     public StringSignerFactory stringSignerFactory(@Qualifier(CLIENT_SECRET_CODEC) Codec clientSecretCodec) {
         return new CodecSignerFactory(BytesSignerFactory.HmacSHA256, clientSecretCodec);
     }
 
+    /**
+     * 通过签名属性构造客户端秘钥提供者。
+     *
+     * @param properties 签名属性
+     * @return 客户端秘钥提供者
+     */
     @Bean
     @ConditionalOnMissingBean(ClientSecretProvider.class)
     @ConditionalOnExpression("'${peacetrue.signature.client-id:}'!='' && '${peacetrue.signature.client-secret:}'!=''")

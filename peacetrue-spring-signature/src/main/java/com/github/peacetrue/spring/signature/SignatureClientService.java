@@ -32,6 +32,15 @@ public class SignatureClientService {
     private final ClientSecretProvider clientSecretProvider;
     private final StringSignerFactory stringSignerFactory;
 
+    /**
+     * 属性设置实例化。
+     *
+     * @param propertyNames           属性名称
+     * @param clientId                客户端编号
+     * @param propertyValuesGenerator 属性值生成器
+     * @param clientSecretProvider    客户端秘钥提供者
+     * @param stringSignerFactory     字符串签名者工厂
+     */
     public SignatureClientService(SignatureParameterNames propertyNames,
                                   @Nullable String clientId,
                                   SignatureParameterValuesGenerator propertyValuesGenerator,
@@ -44,6 +53,13 @@ public class SignatureClientService {
         this.stringSignerFactory = Objects.requireNonNull(stringSignerFactory);
     }
 
+    /**
+     * 签名
+     *
+     * @param request 请求
+     * @param body    请求体
+     * @return uri
+     */
     public URI sign(HttpRequest request, byte[] body) {
         log.info("sign request: {}", request.getURI()); // uri encoded
 

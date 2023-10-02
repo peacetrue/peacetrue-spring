@@ -24,6 +24,7 @@ public class OperatorProperties {
     @NestedConfigurationProperty
     private Pointcut pointcut = new Pointcut();
 
+    /** 切面属性 */
     @Getter
     @Setter
     public static class Pointcut {

@@ -23,6 +23,11 @@ import org.springframework.util.ClassUtils;
 @Configuration
 public class OperatorAutoConfiguration {
 
+    /**
+     * 注册默认的操作者提供者。
+     *
+     * @return 操作者提供者
+     */
     @Bean
     @ConditionalOnMissingBean(OperatorSupplier.class)
     public OperatorSupplier operatorSupplier() {
@@ -45,15 +50,30 @@ public class OperatorAutoConfiguration {
 
         private final OperatorProperties properties;
 
+        /**
+         * 使用 {@link #properties} 构造实例。
+         *
+         * @param properties 操作者配置属性
+         */
         public OperatorPointcutConfiguration(OperatorProperties properties) {
             this.properties = properties;
         }
 
+        /**
+         * 注册默认的操作者方法拦截器。
+         *
+         * @return 方法拦截器
+         */
         @Bean
         public MethodInterceptor operatorMethodInterceptor() {
             return new OperatorMethodInterceptor();
         }
 
+        /**
+         * 注册默认的操作者切面。
+         *
+         * @return 操作者切面
+         */
         @Bean
         public Pointcut operatorPointcut() {
             JdkRegexpMethodPointcut methodMatcher = new JdkRegexpMethodPointcut();
@@ -61,6 +81,13 @@ public class OperatorAutoConfiguration {
             return new ComposablePointcut(ClassFilter.TRUE, methodMatcher);
         }
 
+        /**
+         * 注册默认的操作者织入。
+         *
+         * @param operatorPointcut          操作者切面
+         * @param operatorMethodInterceptor 操作者方法拦截器
+         * @return 操作者织入
+         */
         @Bean
         @ConditionalOnBean(name = "operatorPointcut")
         public OperatorAdvisingPostProcessor operatorPostProcessor(Pointcut operatorPointcut,

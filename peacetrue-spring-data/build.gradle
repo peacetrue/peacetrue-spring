@@ -1,8 +1,13 @@
+//plugins {
+//    id "org.hibernate.orm" version "5.6.15.Final"
+//}
+
 description "spring-data-* 扩展"
 
 dependencies {
     implementation "com.github.peacetrue:peacetrue-beans"
     implementation project(":peacetrue-spring-beans")
+    implementation "javax.xml.bind:jaxb-api"
     compileOnly "org.springframework.data:spring-data-commons"
     compileOnly "javax.persistence:javax.persistence-api"
     compileOnly "org.springframework.data:spring-data-jpa"

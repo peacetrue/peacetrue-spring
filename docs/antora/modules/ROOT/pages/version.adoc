@@ -25,3 +25,4 @@
 == 1.0.4
 
 . 解决 `UriComponentsBuilder` 重复构造 queryParams 的问题，Spring Boot 2.0.0.RELEASE 版本正常，2.1.0.RELEASE 及后续版本有误
+. 支持 JDK 17

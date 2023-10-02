@@ -12,6 +12,11 @@ import java.util.Objects;
  **/
 public class OperatorAdvisingPostProcessor extends AbstractBeanFactoryAwareAdvisingPostProcessor {
 
+    /**
+     * 初始设置通知者
+     *
+     * @param advisor 通知者
+     */
     public OperatorAdvisingPostProcessor(Advisor advisor) {
         this.advisor = Objects.requireNonNull(advisor);
     }

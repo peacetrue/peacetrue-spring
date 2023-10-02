@@ -1,5 +1,6 @@
 package com.github.peacetrue.spring.signature;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -13,13 +14,10 @@ import java.util.Objects;
  * @author peace
  **/
 @Slf4j
+@RequiredArgsConstructor
 public class SignatureHandlerInterceptor extends HandlerInterceptorAdapter {
 
     private final SignatureServerService signatureServerService;
-
-    public SignatureHandlerInterceptor(SignatureServerService signatureServerService) {
-        this.signatureServerService = Objects.requireNonNull(signatureServerService);
-    }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {

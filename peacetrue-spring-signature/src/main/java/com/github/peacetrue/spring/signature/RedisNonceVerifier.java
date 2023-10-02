@@ -21,6 +21,12 @@ public class RedisNonceVerifier implements NonceVerifier {
     private final RedisTemplate<?, ?> redisTemplate;
     private final Expiration expiration;
 
+    /**
+     * 常规实例化。
+     *
+     * @param redisTemplate redis 模板
+     * @param expiration    过期时间（毫秒）
+     */
     public RedisNonceVerifier(RedisTemplate<?, ?> redisTemplate, Long expiration) {
         this.redisTemplate = Objects.requireNonNull(redisTemplate);
         this.expiration = Expiration.from(Objects.requireNonNull(expiration), TimeUnit.MILLISECONDS);

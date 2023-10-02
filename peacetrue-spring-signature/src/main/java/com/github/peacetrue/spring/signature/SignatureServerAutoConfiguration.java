@@ -27,12 +27,25 @@ public class SignatureServerAutoConfiguration {
     @Autowired
     private SignatureProperties properties;
 
+    /**
+     * 注册默认的内存随机码验证器。
+     *
+     * @return 内存随机码验证器
+     */
     @Bean
     @ConditionalOnMissingBean(NonceVerifier.class)
     public NonceVerifier nonceVerifier() {
         return new MemoryNonceVerifier(LongRange.getOffset(properties.getTimestampOffset()));
     }
 
+    /**
+     * 注册默认的签名服务端服务。
+     *
+     * @param clientSecretProvider 客户端秘钥提供者
+     * @param stringSignerFactory  字符串签名者工厂
+     * @param nonceVerifier        随机码验证器
+     * @return 签名服务端服务
+     */
     @Bean
     public SignatureServerService signatureServerService(ClientSecretProvider clientSecretProvider,
                                                          StringSignerFactory stringSignerFactory,
@@ -43,8 +56,18 @@ public class SignatureServerAutoConfiguration {
         );
     }
 
+    /**
+     * 处理器拦截器配置。
+     */
     @Configuration
     public static class HandlerInterceptorConfiguration {
+        /**
+         * 注册签名服务端拦截器。
+         *
+         * @param properties             签名属性
+         * @param signatureServerService 签名服务端服务
+         * @return 配置者
+         */
         @Bean
         public WebMvcConfigurer signatureServerWebMvcConfigurer(
                 SignatureProperties properties, SignatureServerService signatureServerService

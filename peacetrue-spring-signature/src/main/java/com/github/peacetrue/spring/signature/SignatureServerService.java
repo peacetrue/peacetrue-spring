@@ -6,6 +6,7 @@ import com.github.peacetrue.range.LongRange;
 import com.github.peacetrue.servlet.CachedBodyUtils;
 import com.github.peacetrue.servlet.ContentTypeUtils;
 import com.github.peacetrue.signature.*;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.util.StreamUtils;
@@ -25,6 +26,7 @@ import java.util.Objects;
  * @author peace
  **/
 @Slf4j
+@AllArgsConstructor
 public class SignatureServerService {
 
     private final SignatureParameterNames propertyNames;
@@ -34,19 +36,15 @@ public class SignatureServerService {
     private final LongRange timestampOffset;
     private final NonceVerifier nonceVerifier;
 
-    public SignatureServerService(SignatureParameterNames propertyNames,
-                                  ClientSecretProvider clientSecretProvider,
-                                  StringSignerFactory stringSignerFactory,
-                                  LongRange timestampOffset,
-                                  NonceVerifier nonceVerifier) {
-        this.propertyNames = Objects.requireNonNull(propertyNames);
-        this.clientSecretProvider = Objects.requireNonNull(clientSecretProvider);
-        this.stringSignerFactory = Objects.requireNonNull(stringSignerFactory);
-        this.timestampOffset = Objects.requireNonNull(timestampOffset);
-        this.nonceVerifier = Objects.requireNonNull(nonceVerifier);
-    }
-
-    public HttpServletRequest verify(HttpServletRequest request) throws IOException, ServletException {
+    /**
+     * 验证请求。
+     *
+     * @param request 请求
+     * @return 验证后的请求
+     * @throws IOException                             读取请求体内容时发生 IO 异常
+     * @throws MissingServletRequestParameterException 缺少请求参数异常
+     */
+    public HttpServletRequest verify(HttpServletRequest request) throws IOException, MissingServletRequestParameterException {
         log.info("verify request: {}", request.getRequestURL());
 
         String clientId = getParameter(request, propertyNames.getClientId());

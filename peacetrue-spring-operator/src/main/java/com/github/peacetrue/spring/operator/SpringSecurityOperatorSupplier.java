@@ -20,6 +20,11 @@ public class SpringSecurityOperatorSupplier implements OperatorSupplier {
 
     private final OperatorCapable<?> fallbackOperator;
 
+    /**
+     * 使用 {@link #fallbackOperator} 构造实例。
+     *
+     * @param fallbackOperator 默认的操作者提供者
+     */
     public SpringSecurityOperatorSupplier(OperatorCapable<?> fallbackOperator) {
         this.fallbackOperator = Objects.requireNonNull(fallbackOperator);
     }
